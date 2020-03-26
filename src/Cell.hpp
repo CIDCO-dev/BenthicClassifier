@@ -25,7 +25,7 @@ public:
 
     ~Cell() {}
 
-    void addPoint( std::shared_ptr< Point > point ) {
+    void addPoint( Point * point ) {
         points.push_back( point );
     }
 
@@ -56,7 +56,7 @@ private:
 
 // Variables
 
-    std::vector< std::shared_ptr< Point > > points;
+    std::vector< Point * > points;
 
 };
 

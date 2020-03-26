@@ -19,7 +19,7 @@
 
 #include <vector>
 
-#include <memory>
+//#include <memory>
 
 #include <limits>       // std::numeric_limits
 
@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
     // std::cout << georeferencedPing(0) << " " << georeferencedPing(1) << " " << georeferencedPing(2) << " " << quality << " " << intensity << std::endl;
 
 
-    std::vector < std::shared_ptr< Point > > allPoints;
+    std::vector < Point * > allPoints;
 
 
     double xMin = std::numeric_limits<double>::max();
@@ -108,9 +108,7 @@ int main( int argc, char* argv[] )
 
         if ( stream >> valueX >> valueY >> valueZ ) {
             
-            std::shared_ptr< Point > point = std::make_shared< Point > ( valueX, valueY, valueZ );
-
-            allPoints.push_back( point );
+            allPoints.push_back( new Point( valueX, valueY, valueZ ) );
                         
             if ( valueX < xMin )
                 xMin = valueX;
@@ -159,6 +157,15 @@ int main( int argc, char* argv[] )
     grid.display();
 
         
+
+
+    // Deallocate memory
+
+    for ( unsigned int count = 0; count < allPoints.size(); count++ ) {
+        delete allPoints[ count ];
+        allPoints[ count ] = nullptr;
+    }
+
     std::cout << "\nEnd of BenthicClassifier \n" << std::endl;    
         
 }

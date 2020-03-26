@@ -48,7 +48,7 @@ public:
 //    }
 
 
-    void addPoint( std::shared_ptr< Point > point )
+    void addPoint( Point * point )
     {
         double xPoint = point->getX();
         double yPoint = point->getY();
