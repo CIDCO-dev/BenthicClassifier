@@ -76,6 +76,22 @@ public:
     }
 
 
+    int getNbOfPointsForCell( const int indexX, const int indexY, bool & OK  )
+    {
+        OK = false;
+
+        if ( indexX >= 0 && indexX < nbCellsAlongX
+                && indexY >= 0 && indexY < nbCellsAlongY ) {
+            OK = true;
+            return cells[ indexX ][ indexY ].getNbOfPoints();
+        } else {
+            return 0;
+        }
+    }
+
+
+
+
     void display( bool displayEmptyCell = false ) {
 
         std::cout << "\nGrid, nbCellsAlongX: " << nbCellsAlongX
