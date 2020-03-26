@@ -72,15 +72,12 @@ int main( int argc, char* argv[] )
     std::cout << "cellSide: " << cellSide << "\n" << std::endl;
 
 
-
-
     // LGF: NED
     // From MBES-lib's DatagramGeoreferencer::processGeoreferencedPing()
     // std::cout << georeferencedPing(0) << " " << georeferencedPing(1) << " " << georeferencedPing(2) << " " << quality << " " << intensity << std::endl;
 
 
     std::vector < Point * > allPoints;
-
 
     double xMin = std::numeric_limits<double>::max();
     double xMax = - std::numeric_limits<double>::max();
@@ -89,10 +86,10 @@ int main( int argc, char* argv[] )
     double yMax = - std::numeric_limits<double>::max();
     
 
-    std::cout << "\nxMin: " << xMin
-        << "\nxMax: " << xMax
-        << "\nyMin: " << yMin
-        << "\nyMax: " << yMax << std::endl;
+//    std::cout << "\nxMin: " << xMin
+//        << "\nxMax: " << xMax
+//        << "\nyMin: " << yMin
+//        << "\nyMax: " << yMax << std::endl;
 
     
     double valueX;
@@ -138,12 +135,12 @@ int main( int argc, char* argv[] )
         << "\nyMax: " << yMax << "\n" << std::endl;
     
     
-    // Display the list of Points
-    for ( unsigned int count = 0; count < allPoints.size(); count++ )
-        std::cout << "BenthicClassifier, " 
-        << allPoints[ count ]->getX() << " "
-        << allPoints[ count ]->getY() << " "
-        << allPoints[ count ]->getZ() << std::endl;
+//    // Display the list of Points
+//    for ( unsigned int count = 0; count < allPoints.size(); count++ )
+//        std::cout << "BenthicClassifier, "
+//        << allPoints[ count ]->getX() << " "
+//        << allPoints[ count ]->getY() << " "
+//        << allPoints[ count ]->getZ() << std::endl;
 
 
 

@@ -20,9 +20,9 @@ public:
     : x(x), y(y), z(z)
     {}
 
-    ~Point() {
-        std::cout << "Point::~Point()\n";
-    }
+//    ~Point() {
+//        std::cout << "Point::~Point()\n";
+//    }
     
     
     double getX() { return x; }
