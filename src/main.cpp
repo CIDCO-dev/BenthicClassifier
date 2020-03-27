@@ -154,6 +154,20 @@ int main( int argc, char* argv[] )
     grid.display();
 
         
+    // TODO: remove
+    bool OK = grid.computeFeaturesForCell( 0, 0 );
+    std::cout << "bool OK = grid.computeFeaturesForCell( 0, 0 ), OK: "
+              << std::boolalpha << OK << std::noboolalpha << "\n" << std::endl;
+
+    std::vector< double > features;
+
+    grid.getFeaturesForCell( 0, 0, features, OK );
+
+
+    for ( unsigned int count = 0; count < features.size(); count++ ) {
+        std::cout << features[ count ] << "\n";
+    }
+
 
 
     // Deallocate memory
