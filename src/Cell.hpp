@@ -83,9 +83,7 @@ public:
 
         computeCovarianceMatrix();
 
-        bool OK = computeEigenValuesAndVectors();
-
-        if ( OK == false )
+        if ( !computeEigenValuesAndVectors() )
             return false;
 
 
@@ -165,12 +163,6 @@ public:
             momentOrder2Axis2 += piMinusCentroidDotE2 * piMinusCentroidDotE2;
         }
 
-
-//        std::cout << "\nmomentOrder1Axis1: " << momentOrder1Axis1 << "\n"
-//                    << "momentOrder1Axis2: " << momentOrder1Axis2 << "\n"
-//                    << "momentOrder2Axis1: " << momentOrder2Axis1 << "\n"
-//                    << "momentOrder2Axis2: " << momentOrder2Axis2 << "\n" << std::endl;
-
         features.push_back( momentOrder1Axis1 );
         features.push_back( momentOrder1Axis2 );
         features.push_back( momentOrder2Axis1 );
@@ -217,9 +209,6 @@ private:
         Eigen::MatrixXd centered = M.rowwise() - centroid.transpose();
 
         covarianceMatrix = 1.0 / points.size() * ( centered.adjoint() * centered );
-
-//        std::cout << "\ncovarianceMatrix:\n" << covarianceMatrix << "\n" << std::endl;
-
     }
 
 
@@ -248,25 +237,9 @@ private:
         double eigenValuesSum = eigenValues.sum();
         eigenValues = eigenValues / eigenValuesSum;
 
-
         eigenVectors = eigensolver.eigenvectors();
 
-
-//        std::cout << "\neigensolver.info(): " << eigensolver.info()
-//                  << ", eigensolver.info() == Eigen::Success: " << std::boolalpha
-//                  << ( eigensolver.info() == Eigen::Success )
-//                  << std::noboolalpha << "\n" << std::endl;
-
-//        std::cout << "\nEigenvalues:\n" << eigenValues << std::endl;
-
-//        std::cout << "\neigenValuesSum:\n" << eigenValuesSum << std::endl;
-
-
-//        std::cout << "\nEigenvectors (columns of the matrix):\n"
-//                  << eigenVectors << std::endl;
-
         return true;
-
     }
 
 
