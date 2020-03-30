@@ -18,7 +18,6 @@
 
 #include "math.h"
 
-
 #include <Eigen/Dense>
 
 #include "Point.hpp"
@@ -91,7 +90,7 @@ public:
 
 
         // Article semantic_segmentation_3Dpointcloud_Hackel_2016.pdf
-        // p. 179: lambda1 >= lambda2 >= lambda3
+        // p. 179: eigenvalues lambda1 >= lambda2 >= lambda3
 
         // Eigen: "The eigenvalues are sorted in increasing order."
         // Must switch the order
@@ -129,20 +128,65 @@ public:
         sphericity = lambda3 / lambda1;          // λ3/λ1
         features.push_back( sphericity );
 
+        // Smallest eigen values is in eigenValues( 0 )
+        // so corresponding eigen vector is column with index 0 in eigenVectors matrix
+        // 1 − | < [0 0 1], e3 >|
+        // Notation < u, v > is the dot product or scalar product of vectors u and v
+        verticality = 1 - abs( eigenVectors( 2, 0 ) );
+        features.push_back( verticality );
 
         // TODO: do the remaining features
 
-        // verticality = 0;
+
+//        // ---- Moment category
+
+        // e1: column with index 2 in eigenVectors matrix
+        // e2: column with index 1 in eigenVectors matrix
+        momentOrder1Axis1 = 0;
+        momentOrder1Axis2 = 0;
+        momentOrder2Axis1 = 0;
+        momentOrder2Axis2 = 0;
+
+        for ( unsigned int count = 0; count < points.size(); count++ ) {
+
+            Eigen::Vector3d pi ( points[ count ]->getX(),
+                                 points[ count ]->getY(),
+                                 points[ count ]->getZ() );
+
+            Eigen::Vector3d piMinusCentroid = pi - centroid;
+
+            double piMinusCentroidDotE1 = piMinusCentroid.dot( eigenVectors.col( 2 ) );
+            double piMinusCentroidDotE2 = piMinusCentroid.dot( eigenVectors.col( 1 ) );
+
+            momentOrder1Axis1 += piMinusCentroidDotE1;
+            momentOrder1Axis2 += piMinusCentroidDotE2;
+
+            momentOrder2Axis1 += piMinusCentroidDotE1 * piMinusCentroidDotE1;
+            momentOrder2Axis2 += piMinusCentroidDotE2 * piMinusCentroidDotE2;
+        }
 
 
-        // ---- Moment category
+//        std::cout << "\nmomentOrder1Axis1: " << momentOrder1Axis1 << "\n"
+//                    << "momentOrder1Axis2: " << momentOrder1Axis2 << "\n"
+//                    << "momentOrder2Axis1: " << momentOrder2Axis1 << "\n"
+//                    << "momentOrder2Axis2: " << momentOrder2Axis2 << "\n" << std::endl;
 
+        features.push_back( momentOrder1Axis1 );
+        features.push_back( momentOrder1Axis2 );
+        features.push_back( momentOrder2Axis1 );
+        features.push_back( momentOrder2Axis2 );
 
 
         // ---- Height category
 
+        verticalRange = zMax - zMin;
+        features.push_back( verticalRange );
 
-        // verticalRange = zMax - zMin;
+        heightBelow = centroid( 2 ) - zMin;
+        features.push_back( heightBelow );
+
+        heightAbove = zMax - centroid( 2 );
+        features.push_back( heightAbove );
 
 
         featuresComputed = true;
@@ -167,7 +211,10 @@ private:
             M( count, 1 ) = points[ count ]->getY();
             M( count, 2 ) = points[ count ]->getZ();
         }
-        Eigen::MatrixXd centered = M.rowwise() - M.colwise().mean();
+
+        centroid = M.colwise().mean();
+
+        Eigen::MatrixXd centered = M.rowwise() - centroid.transpose();
 
         covarianceMatrix = 1.0 / points.size() * ( centered.adjoint() * centered );
 
@@ -192,9 +239,15 @@ private:
             return false;
 
 
-
-
         eigenValues = eigensolver.eigenvalues();
+
+        // Article semantic_segmentation_3Dpointcloud_Hackel_2016.pdf
+        // p. 179: Eigenvalues are normalised to sum up to 1, so as to
+        // increase robustness against changes in point density
+
+        double eigenValuesSum = eigenValues.sum();
+        eigenValues = eigenValues / eigenValuesSum;
+
 
         eigenVectors = eigensolver.eigenvectors();
 
@@ -204,10 +257,13 @@ private:
 //                  << ( eigensolver.info() == Eigen::Success )
 //                  << std::noboolalpha << "\n" << std::endl;
 
-        std::cout << "\nEigenvalues:\n" << eigenValues << std::endl;
+//        std::cout << "\nEigenvalues:\n" << eigenValues << std::endl;
 
-        std::cout << "\nEigenvectors (columns of the matrix):\n"
-                  << eigenVectors << std::endl;
+//        std::cout << "\neigenValuesSum:\n" << eigenValuesSum << std::endl;
+
+
+//        std::cout << "\nEigenvectors (columns of the matrix):\n"
+//                  << eigenVectors << std::endl;
 
         return true;
 
@@ -221,6 +277,8 @@ private:
     double zMin;
     double zMax;
 
+    Eigen::Vector3d centroid;
+
     Eigen::Matrix3d covarianceMatrix;
 
     Eigen::Vector3d eigenValues;
@@ -231,6 +289,9 @@ private:
     bool featuresComputed;
 
     // TODO: have individual variables or just the vector?
+
+    // Article semantic_segmentation_3Dpointcloud_Hackel_2016.pdf
+    // p. 179: eigenvalues lambda1 >= lambda2 >= lambda3
 
     // Covariance category
     double sum;                 //  λ1 + λ2 + λ3
@@ -243,24 +304,21 @@ private:
     double linearity;           // (λ1 − λ2)/λ1
     double surfaceVariation;    // λ3/(λ1 + λ2 + λ3)
     double sphericity;          // λ3/λ1
-    // double verticality;
+
+    // Notation < u, v > is the dot product or scalar product of vectors u and v
+
+    double verticality;         // 1 − | < [0 0 1], e3i >|
 
     // Moment category
-
-
+    double momentOrder1Axis1;   // SIGMA(  < pi - p, e1 > )        p is centroid of cell
+    double momentOrder1Axis2;   // SIGMA(  < pi - p, e2 > )        p is centroid of cell
+    double momentOrder2Axis1;   // SIGMA(  < pi - p, e1 >^2 )      p is centroid of cell
+    double momentOrder2Axis2;   // SIGMA(  < pi - p, e2 >^2 )      p is centroid of cell
 
     // Height category
-
     double verticalRange;
-
-    // double heightBelow;
-    // double heightAbove;
-
-
-
-
+    double heightBelow;
+    double heightAbove;
 };
-
-
 
 #endif

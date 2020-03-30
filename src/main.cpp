@@ -153,6 +153,7 @@ int main( int argc, char* argv[] )
 
     grid.display();
 
+    std::cout << std::scientific;
         
     // TODO: remove
     bool OK = grid.computeFeaturesForCell( 0, 0 );
@@ -164,8 +165,26 @@ int main( int argc, char* argv[] )
     grid.getFeaturesForCell( 0, 0, features, OK );
 
 
+    std::vector< std::string > featuresName {   "sum",
+                                                "omnivariance",
+                                                "eigenentropy",
+                                                "anisotropy",
+                                                "planarity",
+                                                "linearity",
+                                                "surfaceVariation",
+                                                "sphericity",
+                                                "verticality",
+                                                "momentOrder1Axis1",
+                                                "momentOrder1Axis2",
+                                                "momentOrder2Axis1",
+                                                "momentOrder2Axis2",
+                                                "verticalRange",
+                                                "heightBelow",
+                                                "heightAbove" };
+
+
     for ( unsigned int count = 0; count < features.size(); count++ ) {
-        std::cout << features[ count ] << "\n";
+        std::cout << featuresName[ count ] << ": " << features[ count ] << "\n";
     }
 
 
