@@ -76,7 +76,7 @@ public:
     }
 
 
-    int getNbOfPointsForCell( const int indexX, const int indexY, bool & OK  )
+    int getNbOfPointsForCell( const int indexX, const int indexY, bool & OK )
     {
         OK = false;
 
@@ -90,6 +90,30 @@ public:
     }
 
 
+    bool computeFeaturesForCell( const int indexX, const int indexY ) {
+
+        bool OK = false;
+
+        if ( indexX >= 0 && indexX < nbCellsAlongX
+                && indexY >= 0 && indexY < nbCellsAlongY ) {
+            OK = cells[ indexX ][ indexY ].computeFeatures();
+        }
+
+        return OK;
+    }
+
+
+    void getFeaturesForCell( const int indexX, const int indexY,
+                                std::vector< double > & vectorOut,
+                                bool & OK ) {
+        OK = false;
+
+        if ( indexX >= 0 && indexX < nbCellsAlongX
+                && indexY >= 0 && indexY < nbCellsAlongY ) {
+            OK = true;
+            vectorOut = cells[ indexX ][ indexY ].getFeatures();
+        }
+    }
 
 
     void display( bool displayEmptyCell = false ) {

@@ -151,9 +151,9 @@ int main( int argc, char* argv[] )
         grid.addPoint( allPoints[ count ] );
 
 
-    grid.display();
-
         
+
+
 
 
     // Deallocate memory

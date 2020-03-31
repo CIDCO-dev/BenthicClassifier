@@ -1,6 +1,6 @@
 CC=g++
 OPTIONS=-Wall -static
-#INCLUDES=-I/usr/include/eigen3
+INCLUDES=-I/usr/include/eigen3
 VERSION=0.1.0
 
 root=$(shell pwd)

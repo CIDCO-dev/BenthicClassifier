@@ -31,4 +31,11 @@ TEST_CASE("Test the constructor, adding points, clearing cell")
 
 }
 
+
+TEST_CASE("Test computation of covariance matrix")
+{
+
+
+}
+
 #endif
