@@ -21,6 +21,7 @@
 #include <Eigen/Dense>
 
 #include "Point.hpp"
+#include "machinelearning/dbscan.h"
 
 class Cell
 {
@@ -34,6 +35,17 @@ public:
     {}
 
     ~Cell() {}
+    
+    /*
+     * Baked fresh in Hell ...
+     */
+    int class_id = -1;
+    int octave = 0;
+    unsigned int gridX = -1;
+    unsigned int gridY = -1;
+    /*
+     * enjoy them while they're hot!
+     */
 
     void addPoint( Point * point ) {
         points.push_back( point );
@@ -179,7 +191,24 @@ public:
 
         heightAbove = zMax - centroid( 2 );
         features.push_back( heightAbove );
-
+        
+        featureVector.resize(features.size());
+        featureVector << sum,
+                omnivariance,
+                eigenentropy,
+                anisotropy,
+                planarity,
+                linearity,
+                surfaceVariation,
+                sphericity,
+                verticality,
+                momentOrder1Axis1,
+                momentOrder1Axis2,
+                momentOrder2Axis1,
+                momentOrder2Axis2,
+                verticalRange,
+                heightBelow,
+                heightAbove;
 
         featuresComputed = true;
 
@@ -189,6 +218,10 @@ public:
 
     std::vector< double > & getFeatures() {
         return features;
+    }
+    
+    Eigen::VectorXd & getFeatureVector() {
+        return featureVector;
     }
 
 
@@ -258,6 +291,7 @@ private:
     Eigen::Matrix3d eigenVectors;   // Eigen: "The eigenvalues are sorted in increasing order."
 
     std::vector< double > features;
+    Eigen::VectorXd featureVector;
 
     bool featuresComputed;
 

@@ -148,10 +148,6 @@ public:
 
     }
 
-
-
-
-
     int getNbCellsAlongX()
     { 
         return nbCellsAlongX;
@@ -160,9 +156,11 @@ public:
     int getNbCellsAlongY()
     { 
         return nbCellsAlongY;
-    }    
-
-
+    }
+    
+    std::vector<std::vector<Cell> > & getCells() {
+        return cells;
+    }
 
 private:
 

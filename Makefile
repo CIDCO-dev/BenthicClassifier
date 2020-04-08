@@ -15,6 +15,11 @@ default: prepare BenthicClassifier
 
 BenthicClassifier: prepare
 	$(CC) $(OPTIONS) $(INCLUDES) -o $(exec_dir)/BenthicClassifier src/main.cpp
+	
+debug:
+	mkdir -p $(test_exec_dir)
+	$(CC) $(OPTIONS) -g $(INCLUDES) -o $(test_exec_dir)/tests test/main.cpp
+	
 
 
 test:
