@@ -2,7 +2,7 @@
 #include "catch.hpp"
 
 
-#include "PointTest.hpp"
-#include "CellTest.hpp"
 #include "GridTest.hpp"
+#include "CellTest.hpp"
+#include "DbscanTest.hpp"
 

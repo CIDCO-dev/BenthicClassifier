@@ -23,8 +23,8 @@
 
 #include <limits>       // std::numeric_limits
 
-#include "Point.hpp"
-#include "Grid.hpp"
+#include "Point2.hpp"
+#include "Grid2.hpp"
 
 
 /**
