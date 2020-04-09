@@ -3,6 +3,11 @@ OPTIONS=-Wall -static
 INCLUDES=-I/usr/include/eigen3
 VERSION=0.1.0
 
+FILES=	src/geometry/Point.cpp \
+	src/geometry/Cell.cpp \
+	src/geometry/Grid.cpp \
+	src/machinelearning/DBSCAN.cpp
+
 root=$(shell pwd)
 
 exec_dir=build
@@ -18,7 +23,7 @@ BenthicClassifier: prepare
 	
 debug:
 	mkdir -p $(test_exec_dir)
-	$(CC) $(OPTIONS) -g $(INCLUDES) -o $(test_exec_dir)/tests test/main.cpp
+	$(CC) $(OPTIONS) -g $(INCLUDES) -o $(test_exec_dir)/tests test/main.cpp $(FILES)
 	
 
 

@@ -3,7 +3,7 @@
  */
 
 /* 
- * File:   DbscanTest.hptp
+ * File:   DbscanTest.hpp
  * Author: Jordan McManus <jordan.mcmanus@cidco.ca>
  *
  * Created on April 7, 2020, 11:59 PM
@@ -13,6 +13,7 @@
 #define DBSCANTEST_HPP
 
 #include "catch.hpp"
+#include "../src/machinelearning/DBSCAN.hpp"
 
 TEST_CASE("Test grid on multiple points")
 {
@@ -52,7 +53,7 @@ TEST_CASE("Test grid on multiple points")
     std::vector<double> Z(n, 0.0);
 
     for (unsigned int i = 0; i < n; i++) {
-        Z[i] = std::cos(kx*X[i]).*cos(ky*Y[i]);
+        Z[i] = std::cos(kx*X[i]) * std::cos(ky*Y[i]);
     }
 
     //add noise to points
@@ -69,9 +70,9 @@ TEST_CASE("Test grid on multiple points")
     Grid grid(xmin, xmax, ymin, ymax, 0.5);
     
     for (unsigned int i = 0; i < n; i++) {
-        grid.addPoint(new Point(X[i], Y[i], Z[i]));
+        Eigen::Vector3d point(X[i], Y[i], Z[i]);
+        grid.addPoint(point);
     }
-    
     
     std::vector<std::vector<Cell> > cells = grid.getCells();
     std::vector<Cell> cellsForDBSCAN;

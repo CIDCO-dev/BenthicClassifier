@@ -5,8 +5,8 @@
 
 #include <Eigen/Dense>
 
-#include "../src/Cell.hpp"
-#include "../src/Point.hpp"
+#include "../src/geometry/Cell.hpp"
+#include "../src/geometry/Point.hpp"
 #include "utils/TestUtils.hpp"
 
 
@@ -17,13 +17,13 @@ TEST_CASE("Test the constructor, adding points, clearing cell")
 
     REQUIRE( cell.getNbOfPoints() == 0 );
 
-    Point point1( -64.721366, 1.033044, 14.634260 );
-    Point point2( -64.690600, 1.188072, 14.637367 );
-    Point point3( -64.659785, 1.343379, 14.640452 );
+    Eigen::Vector3d point1( -64.721366, 1.033044, 14.634260 );
+    Eigen::Vector3d point2( -64.690600, 1.188072, 14.637367 );
+    Eigen::Vector3d point3( -64.659785, 1.343379, 14.640452 );
 
-    cell.addPoint( &point1 );
-    cell.addPoint( &point2 );
-    cell.addPoint( &point3 );
+    cell.addPoint( point1 );
+    cell.addPoint( point2 );
+    cell.addPoint( point3 );
 
     REQUIRE( cell.getNbOfPoints() == 3 );
 
@@ -79,9 +79,12 @@ TEST_CASE("Test computation of feature vector")
     
     Cell cell;
     
-    for(unsigned int i = 0; i<n ; i++) {
-        cell.addPoint( new Point(Xnoised[i], Ynoised[i], Znoised[i]));
+    for(unsigned int i = 0; i < 20 ; i++) {
+        Eigen::Vector3d point(Xnoised[i], Ynoised[i], Znoised[i]);
+        cell.addPoint(point);
     }
+    
+    bool debug = true;
     
     bool computed = cell.computeFeatures();
     
