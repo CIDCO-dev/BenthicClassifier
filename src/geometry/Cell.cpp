@@ -9,9 +9,9 @@
 
 #include "Cell.hpp"
 
-Cell::Cell() : zMin( std::numeric_limits<double>::max() ),
-          zMax( - std::numeric_limits<double>::max() ),
-          featuresComputed( false ) {
+Cell::Cell() : zMin(std::numeric_limits<double>::max()),
+zMax(-std::numeric_limits<double>::max()),
+featuresComputed(false) {
 }
 
 Cell::~Cell() {
@@ -39,7 +39,22 @@ void Cell::clear() {
     zMin = std::numeric_limits<double>::max();
     zMax = -std::numeric_limits<double>::max();
 
-    // TODO: if individual feature variables, reset the variables?
+    sum = 0.0;
+    omnivariance = 0.0;
+    eigenentropy = 0.0;
+    anisotropy = 0.0;
+    planarity = 0.0;
+    linearity = 0.0;
+    surfaceVariation = 0.0;
+    sphericity = 0.0;
+    verticality = 0.0;
+    momentOrder1Axis1 = 0.0;
+    momentOrder1Axis2 = 0.0;
+    momentOrder2Axis1 = 0.0;
+    momentOrder2Axis2 = 0.0;
+    verticalRange = 0.0;
+    heightBelow = 0.0;
+    heightAbove = 0.0;
 
     features.clear();
     featuresComputed = false;
@@ -56,8 +71,8 @@ void Cell::display() {
 }
 
 bool Cell::computeFeatures() {
-    
-    if(points.size() < 3) {
+
+    if (points.size() < 3) {
         return false;
     }
 
@@ -196,7 +211,7 @@ void Cell::computeCovarianceMatrix() {
     Eigen::MatrixXd M(points.size(), 3);
 
     for (unsigned int count = 0; count < points.size(); count++) {
-        
+
         M(count, 0) = points[ count ][0];
         M(count, 1) = points[ count ][1];
         M(count, 2) = points[ count ][2];

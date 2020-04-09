@@ -36,7 +36,7 @@ void Grid::addPoint(Eigen::Vector3d point) {
     double yPoint = point[1];
 
     if (xPoint < xMin || xPoint > xMax || yPoint < yMin || yPoint > yMax) {
-        std::cout << "\n\n----- Function Grid::addPoint(): point ( x, y ) = ( " << xPoint
+        std::cerr << "\n\n----- Function Grid::addPoint(): point ( x, y ) = ( " << xPoint
                 << ", " << yPoint << " )\n"
                 << "this is not with the range that was provided to the constructor which was:\n"
                 << "x: [ " << xMin << ", " << xMax << " ]\n"
@@ -48,11 +48,6 @@ void Grid::addPoint(Eigen::Vector3d point) {
 
     int xIndex = static_cast<int> (floor((xPoint - xMin) / cellSide));
     int yIndex = static_cast<int> (floor((yPoint - yMin) / cellSide));
-
-    // std::cout << "\n\n----- Function Grid::addPoint(): point ( x, y ) = ( " << xPoint
-    //             << ", " << yPoint << " )\n"
-    //             << "( xIndex, yIndex ): ( " << xIndex
-    //             << ", " << yIndex << " )\n" << std::endl;
 
     cells[ xIndex ] [ yIndex ].addPoint(point);
 }

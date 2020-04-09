@@ -9,7 +9,7 @@
 /*
  * The MIT License (MIT)
 
- * Copyright (c) 2018 jordan,glm,swyoon
+ * Copyright (c) 2018 glm,jordan,swyoon
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

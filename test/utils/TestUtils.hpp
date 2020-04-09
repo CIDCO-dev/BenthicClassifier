@@ -46,14 +46,14 @@ public:
         return xs;
     }
 
-    static void loadDemingsDataset(std::string filename, std::vector<double> & X, std::vector<double> & Y, std::vector<double> & Z, std::vector<double> & sigmaX, std::vector<double> & sigmaY, std::vector<double> & sigmaZ) {
+    static void loadPointCloud(std::string filename, std::vector<double> & X, std::vector<double> & Y, std::vector<double> & Z, std::vector<double> & sigmaX, std::vector<double> & sigmaY, std::vector<double> & sigmaZ) {
 
         std::ifstream file;
         file.open(filename);
 
         if (!file) {
             std::stringstream errorSS;
-            errorSS << "Could not read Deming Dataset from file: " << filename;
+            errorSS << "Could not read point cloud from file: " << filename;
             std::cerr << errorSS.str();
             throw std::invalid_argument(errorSS.str());
         } else {
