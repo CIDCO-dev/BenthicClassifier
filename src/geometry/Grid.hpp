@@ -5,6 +5,7 @@
  /*
  * \author Christian Bouchard, jordan
  */
+
 #ifndef GRID_HPP
 #define GRID_HPP
 
@@ -19,17 +20,17 @@ public:
     virtual ~Grid();
 
     void addPoint(Eigen::Vector3d point);
-    int getNbOfPointsForCell(const int indexX, const int indexY, bool & OK);
-    bool computeFeaturesForCell(const int indexX, const int indexY);
+    int getNbOfPointsForCell(const unsigned int indexX, const unsigned int indexY, bool & OK);
+    bool computeFeaturesForCell(const unsigned int indexX, const unsigned int indexY);
     void getFeaturesForCell(
-            const int indexX,
-            const int indexY,
+            const unsigned int indexX,
+            const unsigned int indexY,
             std::vector< double > & vectorOut,
             bool & OK);
     
     void display( bool displayEmptyCell = false );    
-    int getNbCellsAlongX();
-    int getNbCellsAlongY();    
+    unsigned int getNbCellsAlongX();
+    unsigned int getNbCellsAlongY();    
     std::vector<std::vector<Cell> > & getCells();
 
 private:
@@ -42,8 +43,8 @@ private:
 
     double cellSide;
 
-    int nbCellsAlongX;
-    int nbCellsAlongY;
+    unsigned int nbCellsAlongX;
+    unsigned int nbCellsAlongY;
 
     std::vector< std::vector< Cell > > cells;
 

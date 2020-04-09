@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 
 #include "../src/geometry/Cell.hpp"
-#include "../src/geometry/Point.hpp"
 #include "utils/TestUtils.hpp"
 
 

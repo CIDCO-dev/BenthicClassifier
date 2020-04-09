@@ -3,8 +3,7 @@ OPTIONS=-Wall -static
 INCLUDES=-I/usr/include/eigen3
 VERSION=0.1.0
 
-FILES=	src/geometry/Point.cpp \
-	src/geometry/Cell.cpp \
+FILES=	src/geometry/Cell.cpp \
 	src/geometry/Grid.cpp \
 	src/machinelearning/DBSCAN.cpp
 

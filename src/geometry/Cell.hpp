@@ -38,7 +38,7 @@ public:
      */
     
     void addPoint( Eigen::Vector3d point );
-    int getNbOfPoints();
+    unsigned int getNbOfPoints();
     void clear();
     void display();
     bool computeFeatures();

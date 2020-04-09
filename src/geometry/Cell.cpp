@@ -2,6 +2,10 @@
  * Copyright 2020 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
  */
 
+/*
+ * \author Christian Bouchard, jordan
+ */
+
 
 #include "Cell.hpp"
 
@@ -25,7 +29,7 @@ void Cell::addPoint(Eigen::Vector3d point) {
         zMax = valueZ;
 }
 
-int Cell::getNbOfPoints() {
+unsigned int Cell::getNbOfPoints() {
     return points.size();
 }
 
@@ -52,6 +56,10 @@ void Cell::display() {
 }
 
 bool Cell::computeFeatures() {
+    
+    if(points.size() < 3) {
+        return false;
+    }
 
     features.clear();
     featuresComputed = false;

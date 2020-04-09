@@ -30,8 +30,8 @@ TEST_CASE("Test Grid")
 
     Grid grid ( xMin, xMax, yMin, yMax, cellSide );
 
-    const int expectedNbCellsAlongX = 2;
-    const int expectedNbCellsAlongY = 7;
+    const unsigned int expectedNbCellsAlongX = 2;
+    const unsigned int expectedNbCellsAlongY = 7;
 
     REQUIRE( grid.getNbCellsAlongX() == expectedNbCellsAlongX );
     REQUIRE( grid.getNbCellsAlongY() == expectedNbCellsAlongY );
@@ -42,8 +42,8 @@ TEST_CASE("Test Grid")
 
     // Before putting points in the grid, the number of points
     // should be zero for all cells
-    for ( int indexX = 0; indexX < grid.getNbCellsAlongX(); indexX++ ) {
-        for ( int indexY = 0; indexY < grid.getNbCellsAlongY(); indexY++ ) {
+    for ( unsigned int indexX = 0; indexX < grid.getNbCellsAlongX(); indexX++ ) {
+        for ( unsigned int indexY = 0; indexY < grid.getNbCellsAlongY(); indexY++ ) {
             number = grid.getNbOfPointsForCell( indexX, indexY, OK );
             REQUIRE( OK == true );
             REQUIRE( number == 0 );
@@ -67,8 +67,8 @@ TEST_CASE("Test Grid")
             = { { 2, 1, 1, 2, 1, 0, 0 },
                 { 0, 0, 0, 0, 0, 1, 2 } };
 
-    for ( int indexX = 0; indexX < grid.getNbCellsAlongX(); indexX++ ) {
-        for ( int indexY = 0; indexY < grid.getNbCellsAlongY(); indexY++ ) {
+    for ( unsigned int indexX = 0; indexX < grid.getNbCellsAlongX(); indexX++ ) {
+        for ( unsigned int indexY = 0; indexY < grid.getNbCellsAlongY(); indexY++ ) {
             number = grid.getNbOfPointsForCell( indexX, indexY, OK );
             REQUIRE( OK == true );
             REQUIRE( number == expectedNbOfPointsForCells[ indexX ][ indexY ] );

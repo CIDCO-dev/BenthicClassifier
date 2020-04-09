@@ -2,13 +2,18 @@
  * Copyright 2020 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
  */
 
+ /*
+ * \author Christian Bouchard, jordan
+ */
+
 #include "Grid.hpp"
 
 Grid::Grid(double xMin, double xMax, double yMin, double yMax, double cellSide) : xMin( xMin ), xMax( xMax ),
         yMin( yMin ), yMax( yMax ),
-        cellSide( cellSide ),
-        nbCellsAlongX( static_cast< int >( ceil( ( xMax - xMin ) / cellSide ) ) ),
-        nbCellsAlongY( static_cast< int >( ceil( ( yMax - yMin ) / cellSide ) ) ) {
+        cellSide( std::abs(cellSide) ),
+        nbCellsAlongX( static_cast< unsigned int >( ceil( ( xMax - xMin ) / std::abs(cellSide) ) ) ),
+        nbCellsAlongY( static_cast< unsigned int >( ceil( ( yMax - yMin ) / std::abs(cellSide) ) ) ) {
+    
     std::cout << "\nGrid::Grid()\n"
             << "nbCellsAlongX: " << nbCellsAlongX
             << "\nnbCellsAlongY: " << nbCellsAlongY
@@ -16,7 +21,7 @@ Grid::Grid(double xMin, double xMax, double yMin, double yMax, double cellSide) 
 
     cells.reserve(nbCellsAlongX);
 
-    for (int count = 0; count < nbCellsAlongX; count++) {
+    for (unsigned int count = 0; count < nbCellsAlongX; count++) {
         cells.push_back(std::vector< Cell > (nbCellsAlongY));
     }
 
@@ -52,7 +57,7 @@ void Grid::addPoint(Eigen::Vector3d point) {
     cells[ xIndex ] [ yIndex ].addPoint(point);
 }
 
-int Grid::getNbOfPointsForCell(const int indexX, const int indexY, bool & OK) {
+int Grid::getNbOfPointsForCell(const unsigned int indexX, const unsigned int indexY, bool & OK) {
     OK = false;
 
     if (indexX >= 0 && indexX < nbCellsAlongX
@@ -64,7 +69,7 @@ int Grid::getNbOfPointsForCell(const int indexX, const int indexY, bool & OK) {
     }
 }
 
-bool Grid::computeFeaturesForCell(const int indexX, const int indexY) {
+bool Grid::computeFeaturesForCell(const unsigned int indexX, const unsigned int indexY) {
 
     bool OK = false;
 
@@ -76,7 +81,7 @@ bool Grid::computeFeaturesForCell(const int indexX, const int indexY) {
     return OK;
 }
 
-void Grid::getFeaturesForCell(const int indexX, const int indexY,
+void Grid::getFeaturesForCell(const unsigned int indexX, const unsigned int indexY,
         std::vector< double > & vectorOut,
         bool & OK) {
     OK = false;
@@ -94,9 +99,9 @@ void Grid::display(bool displayEmptyCell /*= false*/) {
             << "\nnbCellsAlongY: " << nbCellsAlongY
             << "\nnbCellsAlongX * nbCellsAlongY: " << nbCellsAlongX * nbCellsAlongY << "\n\n";
 
-    for (int countX = 0; countX < nbCellsAlongX; countX++) {
+    for (int unsigned countX = 0; countX < nbCellsAlongX; countX++) {
 
-        for (int countY = 0; countY < nbCellsAlongY; countY++) {
+        for (int unsigned countY = 0; countY < nbCellsAlongY; countY++) {
 
             if (cells[ countX ][ countY ].getNbOfPoints() > 0
                     || displayEmptyCell) {
@@ -120,11 +125,11 @@ void Grid::display(bool displayEmptyCell /*= false*/) {
 
 }
 
-int Grid::getNbCellsAlongX() {
+unsigned int Grid::getNbCellsAlongX() {
     return nbCellsAlongX;
 }
 
-int Grid::getNbCellsAlongY() {
+unsigned int Grid::getNbCellsAlongY() {
     return nbCellsAlongY;
 }
 
