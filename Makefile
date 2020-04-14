@@ -5,7 +5,8 @@ VERSION=0.1.0
 
 FILES=	src/geometry/Cell.cpp \
 	src/geometry/Grid.cpp \
-	src/machinelearning/DBSCAN.cpp
+	src/machinelearning/DBSCAN.cpp \
+	src/io/ClassificationOutput.cpp
 
 root=$(shell pwd)
 
@@ -28,7 +29,7 @@ debug:
 
 test:
 	mkdir -p $(test_exec_dir)
-	$(CC) $(OPTIONS) $(INCLUDES) -o $(test_exec_dir)/tests test/main.cpp
+	$(CC) $(OPTIONS) $(INCLUDES) -o $(test_exec_dir)/tests test/main.cpp $(FILES)
 	mkdir -p $(test_result_dir)
 	mkdir -p $(test_work_dir)
 	$(root)/$(test_exec_dir)/tests -r junit -o $(test_result_dir)/BenthicClassifier-report.xml

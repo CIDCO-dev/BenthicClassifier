@@ -33,6 +33,10 @@ unsigned int Cell::getNbOfPoints() {
     return points.size();
 }
 
+std::vector< Eigen::Vector3d > & Cell::getPoints() {
+    return points;
+}
+
 void Cell::clear() {
     points.clear();
 
