@@ -45,6 +45,7 @@ public:
     std::vector< double > & getFeatures();
     Eigen::VectorXd & getFeatureVector();
     
+    std::vector< Eigen::Vector3d > & getPoints();
     
 private:
     
