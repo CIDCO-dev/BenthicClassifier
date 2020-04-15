@@ -18,7 +18,7 @@ void ClassificationOutput::writeClassification(std::string filename, std::vector
 
     std::ofstream file;
     file.open(filename);
-    
+
     //write title
     file << "x" << " "
              << "y" << " "
@@ -43,7 +43,6 @@ void ClassificationOutput::writeClassification(std::string filename, std::vector
 
     for (int classDBSCAN = 0; classDBSCAN < cluster.size(); classDBSCAN++) {
         for (int cellIdx = 0; cellIdx < cluster[classDBSCAN].size(); cellIdx++) {
-            
             Cell cell = cells[cluster[classDBSCAN][cellIdx]];
             std::vector< double > features = cell.getFeatures();
 

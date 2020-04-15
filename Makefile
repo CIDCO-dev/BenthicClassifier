@@ -19,7 +19,7 @@ test_result_dir=build/reports
 default: prepare BenthicClassifier
 
 BenthicClassifier: prepare
-	$(CC) $(OPTIONS) $(INCLUDES) -o $(exec_dir)/BenthicClassifier src/main.cpp
+	$(CC) $(OPTIONS) $(INCLUDES) -o $(exec_dir)/BenthicClassifier src/main.cpp src/geometry/Grid.cpp src/geometry/Cell.cpp src/machinelearning/DBSCAN.cpp
 	
 debug:
 	mkdir -p $(test_exec_dir)

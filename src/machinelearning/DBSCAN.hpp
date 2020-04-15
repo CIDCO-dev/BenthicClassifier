@@ -36,32 +36,28 @@ const int NOISE = -2;
 const int NOT_CLASSIFIED = -1;
 
 class DBSCAN {
-public:
-    
+private:
     //int n
     int minPts;
     double eps;
-    std::vector<Cell> & points;
+    std::vector<Cell*> & points;
     int size;
     std::vector<std::vector<int> > adjPoints;
     std::vector<bool> visited;
     std::vector<std::vector<int> > cluster;
     int clusterIdx;
-    
-    
-    DBSCAN(double eps, int minPts, std::vector<Cell> & points);
-    virtual ~DBSCAN();
-    
-    void run ();
+
     void dfs (int now, int c);
     void checkNearPoints();
     bool isCoreObject(int idx);
-    std::vector<std::vector<int> > getCluster();
     double getDistance(Cell & c1,Cell & c2);
-    
-    
-private:
 
+public:
+    DBSCAN(double eps, int minPts, std::vector<Cell*> & points);
+    virtual ~DBSCAN();
+
+    void run ();
+    std::vector<std::vector<int> > & getCluster();
 };
 
 #endif /* DBSCAN_HPP */

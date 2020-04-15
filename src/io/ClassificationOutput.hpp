@@ -13,10 +13,9 @@ class ClassificationOutput {
 public:
     ClassificationOutput();
     virtual ~ClassificationOutput();
-    
+
     void writeClassification(std::string filename, std::vector<std::vector<int> > & cluster, std::vector<Cell> & cells);
-    
-    
+
 private:
 
 };
