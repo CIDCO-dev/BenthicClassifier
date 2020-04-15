@@ -9,32 +9,27 @@
 
 #include "Cell.hpp"
 
-Cell::Cell() : zMin(std::numeric_limits<double>::max()),
-zMax(-std::numeric_limits<double>::max()),
-featuresComputed(false) {
+Cell::Cell() :  zMin(std::numeric_limits<double>::max()),
+		zMax(-std::numeric_limits<double>::max()),
+		featuresComputed(false) 
+{
+
 }
 
 Cell::~Cell() {
+
 }
 
-void Cell::addPoint(Eigen::Vector3d point) {
+void Cell::addPoint(Eigen::Vector3d * point) {
     points.push_back(point);
 
-    double valueZ = point[2];
+    double valueZ = (*point)[2];
 
     if (valueZ < zMin)
         zMin = valueZ;
 
     if (valueZ > zMax)
         zMax = valueZ;
-}
-
-unsigned int Cell::getNbOfPoints() {
-    return points.size();
-}
-
-std::vector< Eigen::Vector3d > & Cell::getPoints() {
-    return points;
 }
 
 void Cell::clear() {
@@ -64,19 +59,10 @@ void Cell::clear() {
     featuresComputed = false;
 }
 
-void Cell::display() {
-    std::cout << "Cell: " << getNbOfPoints() << " point(s)\n";
-
-    for (unsigned int count = 0; count < points.size(); count++) {
-        std::cout << points[ count ] << "\n";
-    }
-
-    std::cout << std::endl;
-}
-
 bool Cell::computeFeatures() {
 
     if (points.size() < 3) {
+	std::cerr << "Skipping cell: " << points.size() << " points" << std::endl;
         return false;
     }
 
@@ -85,9 +71,10 @@ bool Cell::computeFeatures() {
 
     computeCovarianceMatrix();
 
-    if (!computeEigenValuesAndVectors())
+    if (!computeEigenValuesAndVectors()){
+	std::cerr << "Skipping cell: " << points.size() << " no eigenvalues/eigenvectors" << std::endl;
         return false;
-
+    }
 
     // Article semantic_segmentation_3Dpointcloud_Hackel_2016.pdf
     // p. 179: eigenvalues lambda1 >= lambda2 >= lambda3
@@ -98,9 +85,9 @@ bool Cell::computeFeatures() {
     double lambda2 = eigenValues(1);
     double lambda3 = eigenValues(0);
 
-    // Compute Features
+    // Compute all features
 
-    // ---- Covariance category
+    // Covariance features
 
     sum = lambda1 + lambda2 + lambda3; //  λ1 + λ2 + λ3
     features.push_back(sum);
@@ -135,10 +122,7 @@ bool Cell::computeFeatures() {
     verticality = 1 - abs(eigenVectors(2, 0));
     features.push_back(verticality);
 
-    // TODO: do the remaining features
-
-
-    //        // ---- Moment category
+    // Moment features
 
     // e1: column with index 2 in eigenVectors matrix
     // e2: column with index 1 in eigenVectors matrix
@@ -149,7 +133,7 @@ bool Cell::computeFeatures() {
 
     for (unsigned int count = 0; count < points.size(); count++) {
 
-        Eigen::Vector3d piMinusCentroid = points[ count ] - centroid;
+        Eigen::Vector3d piMinusCentroid = (*points[ count ]) - centroid;
 
         double piMinusCentroidDotE1 = piMinusCentroid.dot(eigenVectors.col(2));
         double piMinusCentroidDotE2 = piMinusCentroid.dot(eigenVectors.col(1));
@@ -167,7 +151,7 @@ bool Cell::computeFeatures() {
     features.push_back(momentOrder2Axis2);
 
 
-    // ---- Height category
+    // Height features
 
     verticalRange = zMax - zMin;
     features.push_back(verticalRange);
@@ -202,47 +186,31 @@ bool Cell::computeFeatures() {
 
 }
 
-std::vector< double > & Cell::getFeatures() {
-    return features;
-}
-
-Eigen::VectorXd & Cell::getFeatureVector() {
-    return featureVector;
-}
-
 void Cell::computeCovarianceMatrix() {
 
     Eigen::MatrixXd M(points.size(), 3);
 
     for (unsigned int count = 0; count < points.size(); count++) {
 
-        M(count, 0) = points[ count ][0];
-        M(count, 1) = points[ count ][1];
-        M(count, 2) = points[ count ][2];
+        M(count, 0) = (*points[ count ])[0];
+        M(count, 1) = (*points[ count ])[1];
+        M(count, 2) = (*points[ count ])[2];
     }
 
     centroid = M.colwise().mean();
 
     Eigen::MatrixXd centered = M.rowwise() - centroid.transpose();
 
-    covarianceMatrix = 1.0 / points.size() * (centered.adjoint() * centered);
+    covarianceMatrix = (1.0 / points.size()) * (centered.adjoint() * centered);
 }
 
 bool Cell::computeEigenValuesAndVectors() {
-    // https://eigen.tuxfamily.org/dox/group__TutorialLinearAlgebra.html
-    // https://eigen.tuxfamily.org/dox/classEigen_1_1SelfAdjointEigenSolver.html
-    // "A matrix $ A $ is selfadjoint if it equals its adjoint. For real matrices,
-    // this means that the matrix is symmetric: it equals its transpose."
-
     // "The eigenvalues are sorted in increasing order."
-
 
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigensolver(covarianceMatrix);
 
-
     if (eigensolver.info() != Eigen::Success)
         return false;
-
 
     eigenValues = eigensolver.eigenvalues();
 

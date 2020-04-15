@@ -3,7 +3,7 @@
  */
 
  /*
- * \author Christian Bouchard, jordan
+ * \author Christian Bouchard, glm, jordan
  */
 
 #ifndef GRID_HPP
@@ -11,43 +11,38 @@
 
 #include <vector>
 #include <math.h>
+#include <exception>
 #include "Cell.hpp"
 #include <Eigen/Dense>
 
 class Grid {
 public:
-    Grid(double xMin, double xMax, double yMin, double yMax, double cellSide);
+    Grid(double xMin, double xMax, double yMin, double yMax, double cellSize,std::vector<Eigen::Vector3d *> & pointCloud);
     virtual ~Grid();
 
-    void addPoint(Eigen::Vector3d point);
-    int getNbOfPointsForCell(const unsigned int indexX, const unsigned int indexY, bool & OK);
-    bool computeFeaturesForCell(const unsigned int indexX, const unsigned int indexY);
-    void getFeaturesForCell(
-            const unsigned int indexX,
-            const unsigned int indexY,
-            std::vector< double > & vectorOut,
-            bool & OK);
-    
-    void display( bool displayEmptyCell = false );    
-    unsigned int getNbCellsAlongX();
-    unsigned int getNbCellsAlongY();    
-    std::vector<std::vector<Cell> > & getCells();
+    void addPoint(Eigen::Vector3d * point);
+
+    void computeCellFeatures();
+
+    // Get/Set
+
+    unsigned int getNbCellsAlongX()			{ return nbCellsAlongX;};
+    unsigned int getNbCellsAlongY()			{ return nbCellsAlongY;};
+    std::vector<std::vector<Cell> > & getCells()	{ return cells;};
 
 private:
-    
     double xMin;
     double xMax;
 
     double yMin;
     double yMax;
 
-    double cellSide;
+    double cellSize;
 
     unsigned int nbCellsAlongX;
     unsigned int nbCellsAlongY;
 
     std::vector< std::vector< Cell > > cells;
-
 };
 
 #endif /* GRID_HPP */
