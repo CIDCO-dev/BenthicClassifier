@@ -10,9 +10,9 @@ sed -i '/nan/d' "${WORKDIR}/WithFeatures/outputfile.Hackel"
 
 ```
 
-Example radius:
-- MBES 10
-- LiDAR 100
+Example radius values:
+- For MBES: 10
+- For LiDAR: 100
 
 
 ## Match labels with ground truthing
@@ -24,8 +24,8 @@ python3 src/generate-training-data.py radius path-to-dfo-labels.csv directory-co
 ```
 
 Example radius:
-- MBES 3
-- LiDAR 10
+- For MBES: 3
+- For LiDAR: 10
 
 ## Train model
 
