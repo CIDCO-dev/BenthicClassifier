@@ -1,5 +1,8 @@
 import csv
 import numpy as np
+import pickle
+import sys
+
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
@@ -11,39 +14,8 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
-def generateMap(inputFilename,model,lbl):
-	with open(inputFilename) as input:
-		outputFilename=inputFilename[:-4] + "_" + type(model).__name__ + ".txt"
-		reader = csv.reader(input)
-		next(reader)
-		unlabeled_data = list(reader)
-		print("[+] Loaded {} soundings to classify".format(len(unlabeled_data)))
-
-		features = []
-
-		#Parse features and labels
-		for x in unlabeled_data:
-			y = [ float(h) for h in x[3:]]
-			features.append( y )
-
-
-		encoded_labels = model.predict(features)
-
-		#Format output
-		with open(outputFilename,'w') as output:
-			writer = csv.writer(output,delimiter=',',quotechar='"')
-			for i in range(len(encoded_labels)):
-				# We will use a numeric ID that equals the encoded value + 1 to avoid conflict with the 0 value which is used for "nothingness" in rasters
-				writer.writerow([unlabeled_data[i][0],unlabeled_data[i][1],unlabeled_data[i][2],lbl[encoded_labels[i]],encoded_labels[i] + 1 ]) #encoded_labels[i]] )
-
-###############################################
-
-########
-# Main #
-########
-
 if len(sys.argv) != 2:
-	sys.stderr.write("Usage: train.py training-data.txt")
+	sys.stderr.write("Usage: train.py training-data.txt\n")
 	sys.exit(1)
 
 trainingFile = sys.argv[1]
@@ -60,9 +32,9 @@ with open(trainingFile) as f:
 
 	#Parse features and labels
 	for x in labeled_data:
-		y = [ float(h) for h in x[3:-1]]
+		y = [ float(h) for h in x[3:-2]]
 		features.append( y )
-		labels.append( x[-1] )
+		labels.append( x[-2] )
 
 
 	#Preprocess labels
@@ -89,6 +61,10 @@ with open(trainingFile) as f:
 
 	#predictions = np.asarray([np.argmax(line) for line in predictions])
 
+	#Save model
+	pickle.dump(model,open("trained.model","wb"))
+
+
 	sys.stderr.write("Totals: \n")
 	sys.stderr.write("[*] {} accuracy: {}\n".format(modelName,metrics.accuracy_score(labelsTest,predictions)))
 	sys.stderr.write(metrics.classification_report(labelsTest, predictions))
@@ -96,6 +72,3 @@ with open(trainingFile) as f:
 	sys.stderr.write(metrics.confusion_matrix(labelsTest,predictions))
 	sys.stderr.write("\n")
 
-else:
-	sys.stderr.write("Cannot open training data file")
-	sys.exit(1)
