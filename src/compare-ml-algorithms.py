@@ -2,7 +2,6 @@ import os
 import sys
 import csv
 import numpy as np
-import pickle
 from sklearn import preprocessing
 from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
@@ -148,9 +147,6 @@ with open(trainingDataPath) as trainingDataFile:
 			optimizingModel = GridSearchCV(model,param_grid,'accuracy') #can also use 'recall'
 			optimizingModel.fit(featuresTrain,labelsTrain)
 			print("Best model: {}".format(optimizingModel.best_params_))
-
-		#Save model
-		pickle.dump(model,open("{}.model".format(modelName),"wb"))
 
 		# Generate maps with it
 		#for filename in os.listdir(surfaceDataPath):

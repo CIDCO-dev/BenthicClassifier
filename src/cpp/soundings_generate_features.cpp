@@ -43,6 +43,13 @@ try{
     // Get cli parameters
     int index;
 
+    double radius = 10.0;
+
+    if(argc != 2){
+	std::cerr << "Usage: soundings_generate_features radius" << std::endl;
+	exit(1);
+    }
+
     // Read point cloud from stdin using georeference output format
     // x y z quality intensity
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
@@ -87,8 +94,6 @@ try{
         //For every point, do a neighborhood search using kd-tree
 	std::vector<int> pointIndex;
 	std::vector<float> distances; //squared
-
-	double radius = 10;
 
 	//Covariance matrix
 	Eigen::MatrixXd M;
@@ -164,7 +169,7 @@ try{
 	soundings[i].heightBelow   = 0;
 
 
-
+	//Compute moment and height features
         for(unsigned int j=0;j<pointIndex.size();j++){
 		Eigen::Vector3d pi( cloud->points[pointIndex[j]].x , cloud->points[pointIndex[j]].y , cloud->points[pointIndex[j]].z ) ;
 	        Eigen::Vector3d piMinusCentroid = pi - centroid;
@@ -191,6 +196,8 @@ try{
 		}
 	}
 
+
+	//print everything
 	printf("%.6f,%.6f,%.6f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f\n",
         	cloud->points[i].x,
                 cloud->points[i].y,

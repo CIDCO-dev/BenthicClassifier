@@ -100,27 +100,29 @@ def bootstrapLabels(surfaceFile,labeledData,radius):
 # Main                                                                         #
 ################################################################################
 
-if len(sys.argv) != 3:
-	sys.stderr.write("Usage: preprocess-labels.py labelfile.csv surfacedirectory\n")
+if len(sys.argv) != 4:
+	sys.stderr.write("Usage: preprocess-labels.py radius labelfile.csv surfacedirectory\n")
 	sys.exit(1)
 
+# Load params from CLI parameters
+radius = int(sys.argv[1])
+labelfile= sys.argv[2]
+surfacedirectory = os.fsencode(sys.argv[3])
+
+sys.stderr.write("Loading ground truthing from {} using a radius of {}m \n".format(labelfile,radius))
+
 # Load ground truthing labels
-labelfile= sys.argv[1]
-
-sys.stderr.write("Loading ground truthing from {}\n".format(labelfile))
-
 labeledData = readLabelFile(labelfile)
 
 if labeledData:
 	sys.stderr.write("{} ground truthing stations read\n".format(len(labeledData)))
 
 	# Bootstrap labels using neighborhoods in surface files found in surfacedirectory
-	surfacedirectory = os.fsencode(sys.argv[2])
 
-	radius = 3
+	sys.stderr.write("Reading point cloud data from directory: {}\n".format(surfacedirectory))
 
 	for filename in os.listdir(surfacedirectory):
-		if filename.endswith(b'.txt'):
+		if filename.endswith(b'.Hackel'):
 			bootstrapLabels(os.path.join(surfacedirectory,filename),labeledData,radius)
 
 else:

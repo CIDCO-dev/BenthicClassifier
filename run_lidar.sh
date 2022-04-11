@@ -10,7 +10,7 @@ for f in `ls ${WORKDIR}/*.txt`
 do
 echo "Processing $f"
 FILENAME=`basename $f`
-cat $f | ./build/soundings_generate_features > "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
+cat $f | ./build/soundings_generate_features 100 > "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
 #TODO: do this in soundings_generate_features
 sed -i '/nan/d' "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
 
