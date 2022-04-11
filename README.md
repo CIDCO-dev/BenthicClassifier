@@ -11,8 +11,8 @@ sed -i '/nan/d' "${WORKDIR}/WithFeatures/outputfile.Hackel"
 ```
 
 Example radius:
- MBES 10
- LiDAR 100
+- MBES 10
+- LiDAR 100
 
 
 ## Match labels with ground truthing
@@ -23,9 +23,10 @@ Use the generate-training-data.py script to generate labeled training data:
 python3 src/generate-training-data.py radius path-to-dfo-labels.csv directory-containing-dot-Hackel-files > training-data.txt
 ```
 
-Example radius data:
- MBES 3
- LiDAR 10
+Example radius:
+- MBES 3
+- LiDAR 10
+
 ## Train model
 
 Using the traning data text file, train the model:
