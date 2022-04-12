@@ -46,8 +46,8 @@ try{
     double radius = 10.0;
 
     if(argc != 2){
-	std::cerr << "Usage: soundings_generate_features radius" << std::endl;
-	exit(1);
+		std::cerr << "Usage: soundings_generate_features radius" << std::endl;
+		exit(1);
     }
 
     // Read point cloud from stdin using georeference output format
@@ -70,15 +70,15 @@ try{
         std::istringstream stream( line );
 
         if ( stream >> valueX >> valueY >> valueZ) {
-	    try{
-	            cloud->push_back(pcl::PointXYZ(valueX,valueY,valueZ) );
-		    soundings.push_back(SoundingPoint(0) );
-             }
-	     catch(std::exception & e){
-		std::cerr <<  e.what() << std::endl;
-	     }
-        }
-    }
+			try{
+				cloud->push_back(pcl::PointXYZ(valueX,valueY,valueZ) );
+				soundings.push_back(SoundingPoint(0) );
+			}
+			catch(std::exception & e){
+				std::cerr <<  e.what() << std::endl;
+			}
+		}
+	}
 
     std::cerr << "[+] " << cloud->size() << " points read" << std::endl; 
 
@@ -91,7 +91,7 @@ try{
     //Walk the entire point cloud
     for(unsigned int i = 0; i < cloud->points.size(); i++){
 
-        //For every point, do a neighborhood search using kd-tree
+	//For every point, do a neighborhood search using kd-tree
 	std::vector<int> pointIndex;
 	std::vector<float> distances; //squared
 
@@ -138,30 +138,46 @@ try{
 	double lambda3 = eigenValues(0);
 
 	// Covariance features
-
+	
 	soundings[i].sum = eigenValuesSum; //  λ1 + λ2 + λ3
+	
+	if((lambda1 > 0 && lambda2 > 0 && lambda3 > 0) ||
+	(lambda1 < 0 && lambda2 < 0 && lambda3 > 0) ||
+	(lambda1 < 0 && lambda2 > 0 && lambda3 < 0) ||
+	(lambda1 > 0 && lambda2 < 0 && lambda3 < 0)){
+		soundings[i].omnivariance = pow(lambda1 * lambda2 * lambda3, 1.0 / 3); // (λ1 · λ2 · λ3) ^ (1/3)
+	}
+		
+	if(lambda1 > 0 && lambda2 > 0 && lambda3 > 0){
+	
+		soundings[i].eigenentropy = -(  lambda1 * log(lambda1) + lambda2 * log(lambda2) + lambda3 * log(lambda3)  ); // - SIGMA( λi · ln(λi) )
+	}
+	
+	if(lambda1 != 0){	
+		
+		soundings[i].anisotropy = (lambda1 - lambda3) / lambda1; // (λ1 − λ3)/λ1
 
-	soundings[i].omnivariance = pow(lambda1 * lambda2 * lambda3, 1.0 / 3); // (λ1 · λ2 · λ3) ^ (1/3)
+		soundings[i].planarity = (lambda2 - lambda3) / lambda1; // (λ2 − λ3)/λ1
 
-	soundings[i].eigenentropy = -(  lambda1 * log(lambda1) + lambda2 * log(lambda2) + lambda3 * log(lambda3)  ); // - SIGMA( λi · ln(λi) )
-
-	soundings[i].anisotropy = (lambda1 - lambda3) / lambda1; // (λ1 − λ3)/λ1
-
-	soundings[i].planarity = (lambda2 - lambda3) / lambda1; // (λ2 − λ3)/λ1
-
-	soundings[i].linearity = (lambda1 - lambda2) / lambda1; // (λ1 − λ2)/λ1
-
-	soundings[i].surfaceVariation = lambda3 / (lambda1 + lambda2 + lambda3); // λ3/(λ1 + λ2 + λ3)
-
-	soundings[i].sphericity = lambda3 / lambda1; // λ3/λ1
-
+		soundings[i].linearity = (lambda1 - lambda2) / lambda1; // (λ1 − λ2)/λ1
+		
+		soundings[i].sphericity = lambda3 / lambda1; // λ3/λ1
+	}
+	if(lambda1+lambda2+lambda3 != 0){
+	
+		soundings[i].surfaceVariation = lambda3 / (lambda1 + lambda2 + lambda3); // λ3/(λ1 + λ2 + λ3)
+	}
+	
 	soundings[i].verticality = 1 - abs(eigenVectors(2, 0));
 
-        // Moment & height features
-        soundings[i].momentOrder1Axis1 = 0;
-        soundings[i].momentOrder1Axis2 = 0;
-        soundings[i].momentOrder2Axis1 = 0;
-        soundings[i].momentOrder2Axis2 = 0;
+
+
+
+	// Moment & height features
+	soundings[i].momentOrder1Axis1 = 0;
+	soundings[i].momentOrder1Axis2 = 0;
+	soundings[i].momentOrder2Axis1 = 0;
+	soundings[i].momentOrder2Axis2 = 0;
 
 	//vertical measurements
 	soundings[i].verticalRange = 0;
@@ -171,35 +187,35 @@ try{
 
 	//Compute moment and height features
         for(unsigned int j=0;j<pointIndex.size();j++){
-		Eigen::Vector3d pi( cloud->points[pointIndex[j]].x , cloud->points[pointIndex[j]].y , cloud->points[pointIndex[j]].z ) ;
-	        Eigen::Vector3d piMinusCentroid = pi - centroid;
+			Eigen::Vector3d pi( cloud->points[pointIndex[j]].x , cloud->points[pointIndex[j]].y , cloud->points[pointIndex[j]].z ) ;
+			Eigen::Vector3d piMinusCentroid = pi - centroid;
 
         	double piMinusCentroidDotE1 = piMinusCentroid.dot(eigenVectors.col(2));
-                double piMinusCentroidDotE2 = piMinusCentroid.dot(eigenVectors.col(1));
+			double piMinusCentroidDotE2 = piMinusCentroid.dot(eigenVectors.col(1));
 
-                soundings[i].momentOrder1Axis1 += piMinusCentroidDotE1;
-                soundings[i].momentOrder1Axis2 += piMinusCentroidDotE2;
+			soundings[i].momentOrder1Axis1 += piMinusCentroidDotE1;
+			soundings[i].momentOrder1Axis2 += piMinusCentroidDotE2;
 
-                soundings[i].momentOrder2Axis1 += piMinusCentroidDotE1 * piMinusCentroidDotE1;
-        	soundings[i].momentOrder2Axis2 += piMinusCentroidDotE2 * piMinusCentroidDotE2;
+			soundings[i].momentOrder2Axis1 += piMinusCentroidDotE1 * piMinusCentroidDotE1;
+			soundings[i].momentOrder2Axis2 += piMinusCentroidDotE2 * piMinusCentroidDotE2;
 
-		double height = cloud->points[pointIndex[j]].z  - cloud->points[i].z;
+			double height = cloud->points[pointIndex[j]].z  - cloud->points[i].z;
 
-		if(height > soundings[i].heightAbove){
-			soundings[i].heightAbove = height;
-			soundings[i].verticalRange = soundings[i].heightAbove - soundings[i].heightBelow;
+			if(height > soundings[i].heightAbove){
+				soundings[i].heightAbove = height;
+				soundings[i].verticalRange = soundings[i].heightAbove - soundings[i].heightBelow;
+			}
+
+			if(height < soundings[i].heightBelow){
+				soundings[i].heightBelow = height;
+				soundings[i].verticalRange = soundings[i].heightAbove - soundings[i].heightBelow;
+			}
 		}
-
-		if(height < soundings[i].heightBelow){
-			soundings[i].heightBelow = height;
-			soundings[i].verticalRange = soundings[i].heightAbove - soundings[i].heightBelow;
-		}
-	}
 
 
 	//print everything
 	printf("%.6f,%.6f,%.6f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f\n",
-        	cloud->points[i].x,
+        		cloud->points[i].x,
                 cloud->points[i].y,
                 cloud->points[i].z,
                 soundings[i].sum,
@@ -220,7 +236,7 @@ try{
                 soundings[i].heightAbove);
     }
 }
-catch(std::exception & e){
-	std::cerr << "Error" << std::endl;
-}
+	catch(std::exception & e){
+		std::cerr << "Error" << std::endl;
+	}
 }
