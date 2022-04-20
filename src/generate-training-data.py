@@ -19,6 +19,7 @@ def readLabelFile(filename):
 		'rocky'				:	'rocky',
 		'Rocky'				:	'rocky',
 		'sands'				:	'sands',
+		'sands '			:	'sands',
 		'sandy mud'			:	'sandy mud'
 	}
 
@@ -44,10 +45,16 @@ def readLabelFile(filename):
 		'not planted'			:	'unvegetated',
 		'not vegetated'			:	'unvegetated',
 		'undifferentiated algae'	:	'vegetated',
-		'undifferentiated vegetation'	:	'vegetated'
+		'undifferentiated vegetation'	:	'vegetated',
+		'Little vegetated'		:	'vegetated',
+		'Not determined'		:	'',
+		'Semi-vegetated'		:	'vegetated',
+		'little vegetation'		:	'vegetated',
+		'not vegetated'			:	'unvegetated',
+		'vegetated'			:	'vegetated'
 	}
 
-	lineMatch = re.compile("^([-+]?[0-9]*\.?[0-9]+),([-+]?[0-9]*\.?[0-9]+),([^,]+),([^,]*),([^,]*),([^,]*),([^,]+),(.*)$")
+	lineMatch = re.compile("^[^,]*,[^,]*,[^,]*,[^,]*,([-+]?[0-9]*\.?[0-9]+),([-+]?[0-9]*\.?[0-9]+),([^,]+),([^,]*),([^,]*),[^,]*,[^,]*,[^,]*,[^,]*,([^,]+),(.*)$")
 
 	with open(filename) as file:
 		for line in file.readlines():
@@ -59,12 +66,17 @@ def readLabelFile(filename):
 				substrate1= substrate_map.get(lineMatchResult.group(3),False)
 				substrate2= substrate_map.get(lineMatchResult.group(4),False)
 				substrate3= substrate_map.get(lineMatchResult.group(5),False)
-				vegetation= vegetation_map.get(lineMatchResult.group(7),False)
+				vegetation= vegetation_map.get(lineMatchResult.group(6),False)
 
 				if substrate1 and len(substrate1) > 0 and vegetation and len(vegetation)>0 :
 					[utm_east, utm_north, utm_zone, utm_letter] = utm.from_latlon(latitude,longitude)
 					#print("{},{},{},{}".format(utm_east,utm_north,substrate1,vegetation))
 					labels.append((utm_east,utm_north,substrate1,vegetation))
+				else:
+					sys.stderr.write("Bad labels: substrate: {} vegetation: {}\n".format(substrate1,vegetation))
+			else:
+				sys.stderr.write("Rejecting line:{}\n".format(line))
+
 		return labels
 
 
