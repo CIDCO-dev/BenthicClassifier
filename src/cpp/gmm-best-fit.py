@@ -2,7 +2,7 @@ import csv
 import numpy as np
 #import pickle
 import sys
-
+import matplotlib.pyplot as plt
 from sklearn import preprocessing
 #from sklearn.naive_bayes import GaussianNB
 #from sklearn.svm import SVC
@@ -10,9 +10,7 @@ from sklearn import preprocessing
 from sklearn import mixture
 #from sklearn.neighbors import KNeighborsClassifier
 #from sklearn.ensemble import AdaBoostClassifier
-
-
-#from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
 #from sklearn import metrics
 
 if len(sys.argv) != 2:
@@ -39,30 +37,48 @@ with open(trainingFile) as f:
 
 
 	#Preprocess labels
-	#labelEncoder = preprocessing.LabelEncoder()
-	#labels_encoded = labelEncoder.fit_transform(labels)
+	labelEncoder = preprocessing.LabelEncoder()
+	labels_encoded = labelEncoder.fit_transform(labels)
 
-	#labelDictionary = dict(zip(labelEncoder.transform(labelEncoder.classes_),labelEncoder.classes_))
+	labelDictionary = dict(zip(labelEncoder.transform(labelEncoder.classes_),labelEncoder.classes_))
 
-	#print(labelDictionary)
-
-	#featuresTrain, featuresTest, labelsTrain, labelsTest = train_test_split(features,labels_encoded, test_size=0.2,random_state=109) #80/20 split
+	featuresTrain, featuresTest, labelsTrain, labelsTest = train_test_split(features,labels_encoded, test_size=0.2,random_state=109) #80/20 split
 	
 	#print(features)
 	
-	features = np.array(features)
+	#features = np.array(features)
 	bic = []
+	lowest_bic = np.infty
 	
 	sys.stderr.write("[+] Finding optimal parameters...\n")
-		
-	for n in range(1,21):
+	n = 1
+	while True :
 		print(n)
 		model = mixture.GaussianMixture(n, covariance_type = "full")
-		model.fit(features)
-		bic.append(model.bic(features))
+		n += 1
+		model.fit(features,labelsTrain)
+		bic.append(model.bic(np.array(featuresTrain)))
+		if bic[-1] < lowest_bic:
+			lowest_bic = bic[-1]
+			best_model = model
+		else:
+			break;
+		if n > 101:
+			break;
+
 	
 	print(bic)
 	print(min(bic))
-	print(1 + bic.index(min(bic)))
+	bestFit = 1 + bic.index(min(bic))
+	print(bestFit)
 	
+	predictions = model.predict(featuresTest)
+	print(predictions)
+	print(labelsTest)
+	
+	
+	y = np .arange(bestFit)
+	x = np.array(bic)
+	plt.plot(x,y)
+	plt.show()
 
