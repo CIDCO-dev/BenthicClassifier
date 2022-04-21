@@ -77,7 +77,7 @@ with open(trainingFile) as f:
 	print(labelsTest)
 	
 	
-	y = np .arange(bestFit)
+	y = np .arange(len(bic))
 	x = np.array(bic)
 	plt.plot(x,y)
 	plt.show()
