@@ -28,11 +28,13 @@ with open(trainingFile) as f:
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(labeled_data)))
 
 	features = []
-	labels = []
+	points = []
 	
 	for x in labeled_data:
 		y = [ float(h) for h in x[3:-2]]
+		p = [ float(h) for h in x[:3]]
 		features.append( y )
+		points.append(p)
 	
 	features = np.array(features)
 	bic = []
@@ -40,31 +42,28 @@ with open(trainingFile) as f:
 	
 	sys.stderr.write("[+] Finding optimal parameters...\n")
 	n = 1
-	while True :
-		print(n)
+	while n < maxClusters :
+		s = "progress: " + str(n) + "/" + str(maxClusters)
+		sys.stderr.write(s+"\n")
 		model = mixture.GaussianMixture(n, covariance_type = "full")
 		n += 1
 		model.fit(features)
+		performance = model.bic(features)
 		bic.append(model.bic(features))
-		if bic[-1] < lowest_bic:
-			lowest_bic = bic[-1]
+		if performance < lowest_bic:
+			lowest_bic = performance
 			best_model = model
 		else:
 			break;
-		if n > maxClusters:
-			break;
 
-	
-	#print(bic)
-	print("bic min: ", min(bic))
+
 	bestFit = 1 + bic.index(min(bic))
-	print("best fit: ", bestFit)
+	sys.stderr.write("best fit: " + str(bestFit) + "\n")
 	
 	predictions = model.predict(features)
-	print(predictions)
 	
 	for i in range(len(features)):
-		xyz = features[i][:3]
+		xyz = points[i]
 		klass = predictions[i]
 		print(str(xyz[0]),str(xyz[1]),str(xyz[2]) , klass)
 
