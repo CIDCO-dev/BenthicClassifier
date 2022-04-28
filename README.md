@@ -1,21 +1,19 @@
 # BenthicClassifier
 Classification of benthic point clouds
 
-## Generate labels
+## Step 1: Generating labels
 
-First, we need to generate Hackel features for all our point cloud data using, and clean lines with NaN:
+We need to generate Hackel features for point cloud data using, and clean lines with NaN:
 ```
 cat xyz_text_file | soundings_generate_features radius >> outputfile.Hackel
 sed -i '/nan/d' "${WORKDIR}/WithFeatures/outputfile.Hackel"
-
 ```
 
-Example radius:
- MBES 10
- LiDAR 100
+Example radius values:
+- For MBES: 10
+- For LiDAR: 100
 
-
-## Match labels with ground truthing
+## Step 2: Matching labels with ground truthing
 
 Use the generate-training-data.py script to generate labeled training data:
 
@@ -23,10 +21,11 @@ Use the generate-training-data.py script to generate labeled training data:
 python3 src/generate-training-data.py radius path-to-dfo-labels.csv directory-containing-dot-Hackel-files > training-data.txt
 ```
 
-Example radius data:
- MBES 3
- LiDAR 10
-## Train model
+Example radius:
+- For MBES: 3
+- For LiDAR: 10
+
+## Step 3: Training the model
 
 Using the traning data text file, train the model:
 
@@ -36,7 +35,7 @@ python3 src/train-model.py training-data.txt
 
 This will generate a trained.model binary file that can be loaded with pickle in Python scripts or used in the following section
 
-## Using the model
+## Step 4: Using the model
 
 1) Generate features for the new files with soundings_generate_features:
 
