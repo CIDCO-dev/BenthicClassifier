@@ -20,60 +20,62 @@ if len(sys.argv) != 3:
 trainingFile = sys.argv[1]
 maxClusters = int(sys.argv[2])
 
+features = []
+points = []
+
 #Load training data
 with open(trainingFile) as f:
 	reader = csv.reader(f)
-	next(reader)
-	labeled_data = list(reader)
-	sys.stderr.write("[+] Loaded {} training samples\n".format(len(labeled_data)))
+	#labeled_data = list(reader)
+	#del reader
+	try:
+		for x in reader:
+			y = [ float(h) for h in x[3:-2]]
+			p = [ float(h) for h in x[:3]]
+			features.append( y )
+			points.append(p)
+	except csv.Error as e:
+		sys.exit('file {}, line {}: {}'.format(filename, reader.line_num, e))
 
-	features = []
-	points = []
-	
-	for x in labeled_data:
-		y = [ float(h) for h in x[3:-2]]
-		p = [ float(h) for h in x[:3]]
-		features.append( y )
-		points.append(p)
-	
-	features = np.array(features)
-	bic = []
-	lowest_bic = np.infty
-	
-	sys.stderr.write("[+] Finding optimal parameters...\n")
-	n = 1
-	while n < maxClusters :
-		s = "progress: " + str(n) + "/" + str(maxClusters)
-		sys.stderr.write(s+"\n")
-		model = mixture.GaussianMixture(n, covariance_type = "full")
-		n += 1
-		model.fit(features)
-		performance = model.bic(features)
-		bic.append(model.bic(features))
-		if performance < lowest_bic:
-			lowest_bic = performance
-			best_model = model
-		else:
-			break;
+sys.stderr.write("[+] Loaded {} training samples\n".format(len(features)))	
+features = np.array(features)
+bic = []
+lowest_bic = np.infty
+
+sys.stderr.write("[+] Finding optimal parameters...\n")
+n = 1
+while n < maxClusters :
+	s = "progress: " + str(n) + "/" + str(maxClusters)
+	sys.stderr.write(s+"\n")
+	model = mixture.GaussianMixture(n, covariance_type = "full")
+	n += 1
+	model.fit(features)
+	performance = model.bic(features)
+	bic.append(model.bic(features))
+	if performance < lowest_bic:
+		lowest_bic = performance
+		best_model = model
+	else:
+		break;
 
 
-	bestFit = 1 + bic.index(min(bic))
-	sys.stderr.write("best fit: " + str(bestFit) + "\n")
-	
-	predictions = model.predict(features)
-	
-	for i in range(len(features)):
-		xyz = points[i]
-		klass = predictions[i]
-		print(str(xyz[0]),str(xyz[1]),str(xyz[2]) , klass)
+bestFit = 1 + bic.index(min(bic))
+sys.stderr.write("best fit: " + str(bestFit) + "\n")
 
-	y = np.arange(1, len(bic)+1)
-	x = np.array(bic)
-	plt.gca().invert_yaxis()
-	plt.gca().invert_xaxis()
-	plt.plot(x,y)
-	plt.xlabel("best fit")
-	plt.xlabel("N clusters")
-	plt.ylabel("BIC")
-	plt.show()
+predictions = model.predict(features)
 
+for i in range(len(features)):
+	xyz = points[i]
+	klass = predictions[i]
+	print(str(xyz[0]),str(xyz[1]),str(xyz[2]) , klass)
+"""
+y = np.arange(1, len(bic)+1)
+x = np.array(bic)
+plt.gca().invert_yaxis()
+plt.gca().invert_xaxis()
+plt.plot(x,y)
+plt.xlabel("best fit")
+plt.xlabel("N clusters")
+plt.ylabel("BIC")
+plt.show()
+"""
