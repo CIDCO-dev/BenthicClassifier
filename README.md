@@ -5,8 +5,7 @@ Classification of benthic point clouds
 
 We need to generate Hackel features for point cloud data using, and clean lines with NaN:
 ```
-cat xyz_text_file | soundings_generate_features radius >> outputfile.Hackel
-sed -i '/nan/d' "${WORKDIR}/WithFeatures/outputfile.Hackel"
+cat xyz_text_file | ./soundings_generate_features radius >> outputfile.Hackel
 ```
 
 Example radius values:

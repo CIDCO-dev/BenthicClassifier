@@ -27,7 +27,7 @@ points = []
 reader = dd.read_csv(trainingFile)
 #print(len(reader))
 #print(reader.head())
-features = reader[["3","4","5","6","7","8","9","10","11","12","13","14","15","16"]]
+features = reader[["3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]]
 points = reader[["0","1","2"]]
 #print(features.head())
 features_pd = features.compute()
@@ -42,7 +42,7 @@ lowest_bic = np.infty
 
 sys.stderr.write("[+] Finding optimal parameters...\n")
 n = 1
-while n < maxClusters :
+while n <= maxClusters :
 	s = "progress: " + str(n) + "/" + str(maxClusters)
 	sys.stderr.write(s+"\n")
 	model = mixture.GaussianMixture(n, covariance_type = "full")
