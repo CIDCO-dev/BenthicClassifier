@@ -2,32 +2,24 @@ import csv
 import numpy as np
 import sys
 import math
-import random
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
 
-
+# size in milimeters
+typeOfSubstrate = {'sands':1, 'blocks':300, 'rocky':600, 'cobble':150, 'gravels':30, 'sandy mud':0.05}
 
 
 def evaluate_substrate(substrate_type):
-	# size in micrometers
-	# if substrate_type == 'sands' or substrate_type == 'gravels' or substrate_type == 'sandy mud':
-	if substrate_type == 'sandy mud':
-		return random.randrange(62)
-	elif substrate_type == 'sands':
-		return random.randrange(62,2000)
-	elif substrate_type == 'gravels':
-		return random.randrange(2000,64000)
-	elif substrate_type == 'cobble':
-		return random.randrange(64000,254000)
-	elif substrate_type == 'blocks':
-		return random.randrange(254000, 1000000)
-	elif substrate_type == 'rocky':
-		return random.randrange(1000000,10000000)
-	else :
-		return -1
+	for x in typeOfSubstrate.keys():
+		if x == substrate_type:
+			return typeOfSubstrate[x]
+	
+	sys.stderr.write("type of substrate not found")
+	return -1
+
+
 
 
 if len(sys.argv) != 2:
@@ -57,15 +49,15 @@ with open(trainingFile) as f:
 			substrateSizes.append(substrateSize)
 
 if(len(features) == len(points) and len(features) == len(substrateSizes)):
-	print("ok")
+	print(typeOfSubstrate)
 	
 featuresTrain, featuresTest, labelsTrain, labelsTest = train_test_split(features,substrateSizes, test_size=0.2,random_state=110)
 
 params = {
-    "n_estimators": 500,
-    "max_depth": 5,
+    "n_estimators": 400,
+    "max_depth": 4,
     "min_samples_split": 5,
-    "learning_rate": 0.008,
+    "learning_rate": 0.005,
     "loss": "squared_error",
 }
 
@@ -83,7 +75,6 @@ for i in range(len(predictions)):
 """
 rmse = math.sqrt(mean_squared_error(labelsTest, model.predict(featuresTest)))
 print("The root mean squared error (RMSE) on test set: {:.4f}".format(rmse))
-
 
 def try_param(param):
 	model = GradientBoostingRegressor(**param)
@@ -106,10 +97,10 @@ while(RMSE[len(RMSE) - 2 ] - RMSE[len(RMSE) - 1 ] >= 1):
 	
 	
 	up_params = temp_params.copy()
-	up_params.update({"n_estimators": temp_params["n_estimators"]+100})
+	up_params.update({"n_estimators": temp_params["n_estimators"]*2})
 	up_rmse = try_param(up_params)
 	down_params = temp_params.copy()
-	down_params.update({"n_estimators": int(temp_params["n_estimators"]-100)})
+	down_params.update({"n_estimators": int(temp_params["n_estimators"]/2)})
 	down_rmse = try_param(down_params)
 	
 	if up_rmse > down_rmse:
@@ -146,4 +137,5 @@ while(RMSE[len(RMSE) - 2 ] - RMSE[len(RMSE) - 1 ] >= 1):
 	
 	print(temp_params)
 	print("\n")
+
 
