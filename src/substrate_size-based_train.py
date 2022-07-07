@@ -2,34 +2,35 @@ import csv
 import numpy as np
 import sys
 import math
-import random
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
 
-
+# size in milimeters
+# blocks = (1000 - 254)/2 + 254
+# rocky = (inf - blocks)/2 + blocks ~= (627 - 10 000)/2 + 627
+typeOfSubstrate = {'sands':1.031, 'blocks':627, 'rocky':5313, 'cobble':160, 'gravels':33, 'sandy mud':0.032}
 
 
 def evaluate_substrate(substrate_type):
-	# size in micrometers
-	# if substrate_type == 'sands' or substrate_type == 'gravels' or substrate_type == 'sandy mud':
-	if substrate_type == 'sandy mud':
-		return random.randrange(62)
-	elif substrate_type == 'sands':
-		return random.randrange(62,2000)
-	elif substrate_type == 'gravels':
-		return random.randrange(2000,64000)
-	elif substrate_type == 'cobble':
-		return random.randrange(64000,254000)
-	elif substrate_type == 'blocks':
-		return random.randrange(254000, 1000000)
-	elif substrate_type == 'rocky':
-		return random.randrange(1000000,10000000)
-	else :
-		return -1
+	for x in typeOfSubstrate.keys():
+		if x == substrate_type:
+			return typeOfSubstrate[x]
+	
+	sys.stderr.write("type of substrate not found")
+	return -1
+
+def try_param(param):
+	model = GradientBoostingRegressor(**param)
+	model.fit(featuresTrain, labelsTrain)
+	rmse = math.sqrt(mean_squared_error(labelsTest, model.predict(featuresTest)))
+	print("try: ", rmse)
+	return rmse
 
 
+
+# ==========MAIN========== #
 if len(sys.argv) != 2:
 	sys.stderr.write("Usage: substrate_size-based_train.py mbes-training-data.txt\n")
 	sys.exit(1)
@@ -57,59 +58,102 @@ with open(trainingFile) as f:
 			substrateSizes.append(substrateSize)
 
 if(len(features) == len(points) and len(features) == len(substrateSizes)):
-	print("ok")
+	print("Parsing ok")
 	
 featuresTrain, featuresTest, labelsTrain, labelsTest = train_test_split(features,substrateSizes, test_size=0.2,random_state=110)
 
 params = {
-    "n_estimators": 500,
-    "max_depth": 5,
-    "min_samples_split": 5,
-    "learning_rate": 0.008,
+    "n_estimators": 100,
+    "max_depth": 2,
+    "min_samples_split": 2,
+    "learning_rate": 0.01,
     "loss": "squared_error",
 }
-
+print("model param : ", params)
+sys.stderr.write("[+] Testing model param...\n")
 model = GradientBoostingRegressor(**params)
-
-modelName = type(model).__name__ 
-
 model.fit(featuresTrain, labelsTrain)
-
-sys.stderr.write("[+] Validating models...\n")
-
-"""
-for i in range(len(predictions)):
-	print(predictions[i], " : ", test_labels[i] )
-"""
 rmse = math.sqrt(mean_squared_error(labelsTest, model.predict(featuresTest)))
 print("The root mean squared error (RMSE) on test set: {:.4f}".format(rmse))
-
-
-def try_param(param):
-	model = GradientBoostingRegressor(**param)
-	model.fit(featuresTrain, labelsTrain)
-	rmse = math.sqrt(mean_squared_error(labelsTest, model.predict(featuresTest)))
-	print("try: ", rmse)
-	return rmse
 	
 
-RMSE = []
-RMSE.append(rmse+1)
-RMSE.append(rmse)
-temp_params = params
+print("\noptimisation start ...")
+RMSE = [rmse+1,rmse]
+temp_params = params.copy()
 
-loop = 0
+estimator = 500
+bestEstimator = 0
+estimatorRmse = [rmse+10, rmse]
+depthRmse = [rmse+10, rmse]
+splitRmse = [rmse+10, rmse]
+learningRmse = [rmse+10, rmse]
 
+print("estimator param")
+while (estimator <= 10000 and estimatorRmse[len(estimatorRmse) - 2] - estimatorRmse[len(estimatorRmse) - 1] >= 10 ):
+	temp_params.update({"n_estimators": estimator})
+	rmse = try_param(temp_params)
+	estimatorRmse.append(rmse)
+	estimator = estimator + 500
+print("estimator" , estimatorRmse)
+bestEstimator = estimator - 500
+
+
+temp_params = params.copy()
+depth = 3
+bestDepth = 0
+print("max depth param")
+while (depth <= 20 and depthRmse[len(depthRmse) - 2] - depthRmse[len(depthRmse) - 1] >= 10 ):
+	temp_params.update({"max_depth": depth})
+	rmse = try_param(temp_params)
+	depthRmse.append(rmse)
+	depth = depth + 2
+print("depth", depthRmse)
+bestDepth = depth - 2
+
+"""
+temp_params = params.copy()
+split = 5
+bestSplit = 0
+print("min sample split param")
+while (split <= 20 and splitRmse[len(splitRmse) - 2] - splitRmse[len(splitRmse) - 1] >= 10 ):
+	temp_params.update({"min_samples_split": split})
+	rmse = try_param(temp_params)
+	splitRmse.append(rmse)
+	split = split + 2
+print("split", splitRmse)
+"""
+
+temp_params = params.copy()
+learning = [0.1, 0.01, 0.001, 0.5, 0.05, 0.005]
+bestRate = 0
+print("learning rate param")
+for rate in learning:
+	subLearningRmse = learningRmse.copy()
+	while (rate <= 0.5 and learningRmse[len(learningRmse) - 2] - learningRmse[len(learningRmse) - 1] >= 10 ):
+		temp_params.update({"learning_rate": rate})
+		rmse = try_param(temp_params)
+		subLearningRmse.append(rmse)
+		rate = rate + rate
+	print(subLearningRmse)
+	
+
+
+temp_params = {
+    "n_estimators": int(bestEstimator/2),
+    "max_depth": int(bestDepth/2),
+    "min_samples_split": 5,
+    "learning_rate": 0.01,
+    "loss": "squared_error",
+}
+#print(temp_params)
+
+print("fine tune param")
 while(RMSE[len(RMSE) - 2 ] - RMSE[len(RMSE) - 1 ] >= 1):
-	#print("loop", RMSE[len(RMSE) - 2 ] ," ? ", RMSE[len(RMSE) - 1 ])
-	#loop = loop + 1 
-	
-	
 	up_params = temp_params.copy()
-	up_params.update({"n_estimators": temp_params["n_estimators"]+100})
+	up_params.update({"n_estimators": temp_params["n_estimators"]*2})
 	up_rmse = try_param(up_params)
 	down_params = temp_params.copy()
-	down_params.update({"n_estimators": int(temp_params["n_estimators"]-100)})
+	down_params.update({"n_estimators": int(temp_params["n_estimators"]/2)})
 	down_rmse = try_param(down_params)
 	
 	if up_rmse > down_rmse:
@@ -131,10 +175,10 @@ while(RMSE[len(RMSE) - 2 ] - RMSE[len(RMSE) - 1 ] >= 1):
 		temp_params.update({"max_depth": up_params["max_depth"]})
 		
 	up_params = temp_params.copy()
-	up_params.update({"learning_rate": temp_params["learning_rate"] + 0.0005})
+	up_params.update({"learning_rate": temp_params["learning_rate"]*2})
 	up_rmse = try_param(up_params)
 	down_params = temp_params.copy()
-	down_params.update({"learning_rate": temp_params["learning_rate"] - 0.0005})
+	down_params.update({"learning_rate": temp_params["learning_rate"]/2})
 	down_rmse = try_param(down_params)
 	
 	if up_rmse > down_rmse:
@@ -146,4 +190,5 @@ while(RMSE[len(RMSE) - 2 ] - RMSE[len(RMSE) - 1 ] >= 1):
 	
 	print(temp_params)
 	print("\n")
+
 
