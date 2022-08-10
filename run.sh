@@ -16,4 +16,4 @@ sed -i '/nan/d' "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
 done
 
 #echo "Generating training data"
-#python3 ./src/generate-training-data.py ../BenthicClassifierData/labels.csv ../BenthicClassifierData/Surfaces/WithFeatures > training-data.txt
+#python3 ./src/generate-training-data.py ../BenthicClassifierData/labels2.csv ../BenthicClassifierData/Surfaces/WithFeatures > training-data.txt
