@@ -10,12 +10,12 @@
     #include <getopt.h>
 #endif
 
-
+#include <stdio.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
 
-#include <sstream>
+//#include <sstream>
 
 #include <vector>
 
@@ -69,10 +69,9 @@ int main( int argc, char* argv[] )
 
 		while ( std::getline( std::cin, line ) ) {
 
-		    std::istringstream stream( line );
-
-		    if ( stream >> valueX >> valueY >> valueZ) {
+		    if (3 == sscanf(line.c_str(), "%f %f %f", &valueX, &valueY, &valueZ)) {
 				try{
+					//printf("%f %f\n", valueX, valueY);
 					cloud->push_back(pcl::PointXYZ(valueX,valueY,valueZ) );
 					soundings.push_back(SoundingPoint(0) );
 				}
@@ -138,7 +137,9 @@ int main( int argc, char* argv[] )
 		double lambda1 = eigenValues(2);
 		double lambda2 = eigenValues(1);
 		double lambda3 = eigenValues(0);
-
+		
+		//std::cerr<< lambda1 <<" "<< lambda2 <<" "<< lambda3 << "\n";
+		
 		// Covariance features
 		
 		soundings[i].sum = eigenValuesSum; //  λ1 + λ2 + λ3
@@ -231,7 +232,30 @@ int main( int argc, char* argv[] )
 			        soundings[i].heightAbove);
 			}
 			else{
-				std::cerr<<"element "<< i <<" contain NaN" << std::endl;
+				std::cerr<<"line "<< i <<" contain NaN" << std::endl;
+				// for debugging purposes
+				/*
+				printf("%.6f,%.6f,%.6f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f,%.12f\n",
+					cloud->points[i].x,
+			        cloud->points[i].y,
+			        cloud->points[i].z,
+			        soundings[i].sum,
+			        soundings[i].omnivariance,
+			        soundings[i].eigenentropy,
+			        soundings[i].anisotropy,
+			        soundings[i].planarity,
+			        soundings[i].linearity,
+			        soundings[i].surfaceVariation,
+			        soundings[i].sphericity,
+			        soundings[i].verticality,
+			        soundings[i].momentOrder1Axis1,
+			        soundings[i].momentOrder1Axis2,
+			        soundings[i].momentOrder2Axis1,
+			        soundings[i].momentOrder2Axis2,
+			        soundings[i].verticalRange,
+			        soundings[i].heightBelow,
+			        soundings[i].heightAbove);
+			        */
 			}
 		}
 	}
