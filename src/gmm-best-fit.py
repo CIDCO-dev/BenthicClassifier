@@ -27,7 +27,7 @@ points = []
 reader = dd.read_csv(trainingFile)
 #print(len(reader))
 #print(reader.head())
-features = reader[["3","4","5","6","7","8","9","10","11","12","13","14","15","16"]]
+features = reader[["3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"]]
 points = reader[["0","1","2"]]
 #print(features.head())
 features_pd = features.compute()
@@ -42,7 +42,7 @@ lowest_bic = np.infty
 
 sys.stderr.write("[+] Finding optimal parameters...\n")
 n = 1
-while n < maxClusters :
+while n <= maxClusters :
 	s = "progress: " + str(n) + "/" + str(maxClusters)
 	sys.stderr.write(s+"\n")
 	model = mixture.GaussianMixture(n, covariance_type = "full")
@@ -61,20 +61,14 @@ bestFit = 1 + bic.index(min(bic))
 sys.stderr.write("best fit: " + str(bestFit) + "\n")
 
 predictions = model.predict(features_pd.to_numpy())
+features = features_pd.to_numpy()
 
 for i in range(len(features)):
-	xyz = points[i]
-	klass = predictions[i]
-	print(str(xyz[0]),str(xyz[1]),str(xyz[2]) , klass)
-
-"""
-y = np.arange(1, len(bic)+1)
-x = np.array(bic)
-plt.gca().invert_yaxis()
-plt.gca().invert_xaxis()
-plt.plot(x,y)
-plt.xlabel("best fit")
-plt.xlabel("N clusters")
-plt.ylabel("BIC")
-plt.show()
-"""
+        feature = features[i]
+        xyz = points[i]
+        klass = predictions[i]
+        sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
+                                        xyz[0], xyz[1], xyz[2], feature[0], feature[1], feature[2], feature[3], feature[4],
+                                        feature[5], feature[6], feature[7], feature[8], feature[9], feature[10], feature[11],
+                                        feature[12], feature[13], feature[14], feature[15], klass
+                                        ))
