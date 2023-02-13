@@ -33,7 +33,7 @@ if model:
 		reader = csv.reader(dataFile)
 		next(reader)
 		data = list(reader)
-		print("[+] Loaded {} soundings".format(len(data)))
+		sys.stderr.write("[+] Loaded {} soundings \n".format(len(data)))
 
 		features = [x[3:] for x in data]
 
