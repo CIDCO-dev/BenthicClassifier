@@ -1,17 +1,14 @@
 from dask import dataframe as dd
 import numpy as np
-#import pickle
+import pickle
 import sys
-#import matplotlib.pyplot as plt
+
 from sklearn import preprocessing
-#from sklearn.naive_bayes import GaussianNB
-#from sklearn.svm import SVC
-#from sklearn.ensemble import GradientBoostingClassifier
+
 from sklearn import mixture
-#from sklearn.neighbors import KNeighborsClassifier
-#from sklearn.ensemble import AdaBoostClassifier
+
 from sklearn.model_selection import train_test_split
-#from sklearn import metrics
+
 
 if len(sys.argv) != 3:
 	sys.stderr.write("Usage: gmm-best-fit.py training-data.txt nb-max-class \n")
@@ -63,6 +60,7 @@ sys.stderr.write("best fit: " + str(bestFit) + "\n")
 predictions = model.predict(features_pd.to_numpy())
 features = features_pd.to_numpy()
 
+"""
 for i in range(len(features)):
         feature = features[i]
         xyz = points[i]
@@ -72,3 +70,8 @@ for i in range(len(features)):
                                         feature[5], feature[6], feature[7], feature[8], feature[9], feature[10], feature[11],
                                         feature[12], feature[13], feature[14], feature[15], klass
                                         ))
+"""
+
+#Save model
+pickle.dump(best_model,open("gmm_trained.model","wb"))
+
