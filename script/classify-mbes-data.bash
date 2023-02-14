@@ -15,7 +15,7 @@ dir=$1
 echo $dir
 mkdir -p $dir/classification
 
-echo x, y, z, boosting class, gmm class > $dir/classified_both_model.xyzc
+echo x, y, z, boosting class, gmm class > $dir/classification/classified_both_model.xyzc
 for FILE in $dir*.hackel;
 do
 	echo $FILE
