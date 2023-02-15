@@ -29,9 +29,10 @@ if len(sys.argv) != 2:
 	sys.exit(1)
 
 
-print(["0 : 19", "1 : blocks", "2 : cobble", "3 : gravels", "4 : rocky", "5 : sands", "6 : sandy mud"]) 
+#sys.stderr.write(["0 : 19", "1 : blocks", "2 : cobble", "3 : gravels", "4 : rocky", "5 : sands", "6 : sandy mud"]) 
 
-classifiedData = read_classification_file(sys.argv[1])
+filePath = sys.argv[1]
+classifiedData = read_classification_file(filePath)
 
 classMatch = []
 classMatchingCounter = dict()
@@ -86,24 +87,36 @@ for i in range(len(classifiedData)):
 
 
 """ 3D bars """
+print("{},{},{}".format("Supervised class", " Unsupervised class", " Occurence"))
 z = list(classMatchingCounter.values())
 boostingBar = []
 gmmBar = []
-for match in classMatchingCounter.keys():
+for i in range(len(classMatchingCounter.keys())):
+	keys = list(classMatchingCounter.keys())
+	match = keys[i]
 	classes = match.split("-")
 	boostingBar.append(int(classes[0]))
 	gmmBar.append(int(classes[1]))
+	print("{},{},{}".format(classes[0], classes[1],z[i]))
 
 
 ax = plt.axes(projection='3d')
 bottom = np.zeros_like(z)
-width = depth = 0.1
-ax.set_xlabel('GBX class')
-ax.set_ylabel('GMM class')
+width = depth = 0.5
+ax.set_xlabel('Supervised class')
+ax.set_ylabel('Unsupervised class')
 ax.set_zlabel('Occurence')
 
 ax.bar3d(boostingBar, gmmBar, bottom, width, depth, z, shade=True)
-plt.show()
+#plt.show()
+
+pathname, extension = os.path.splitext(filePath)
+filename = pathname.split('/')
+filename = filename[-1] + ".png"
+#print(filename[-1])
+plt.savefig(filename, dpi=1200)
+
+
 
 
 
