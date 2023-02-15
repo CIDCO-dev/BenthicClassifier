@@ -23,7 +23,7 @@ trainingFile = sys.argv[1]
 #Load training data
 with open(trainingFile) as f:
 	reader = csv.reader(f)
-	next(reader)
+	#next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(labeled_data)))
 

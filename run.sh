@@ -12,7 +12,7 @@ echo "Processing $f"
 FILENAME=`basename $f`
 cat $f | ./build/soundings_generate_features 10 > "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
 #TODO: do this in soundings_generate_features
-sed -i '/nan/d' "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
+#sed -i '/nan/d' "${WORKDIR}/WithFeatures/$FILENAME.Hackel"
 done
 
 #echo "Generating training data"
