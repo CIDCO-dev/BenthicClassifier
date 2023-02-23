@@ -113,7 +113,7 @@ def bootstrapLabels(surfaceFile,labeledData,radius):
 ################################################################################
 
 if len(sys.argv) != 4:
-	sys.stderr.write("Usage: preprocess-labels.py radius labelfile.csv surfacedirectory\n")
+	sys.stderr.write("Usage: generate-training-data.py radius labelfile.csv surfacedirectory\n")
 	sys.exit(1)
 
 # Load params from CLI parameters
