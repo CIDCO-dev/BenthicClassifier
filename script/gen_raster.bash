@@ -13,7 +13,7 @@ gen_vrt_gbx(){
 
 	echo "<OGRVRTDataSource>
 		<OGRVRTLayer name=\"${vrtFilename%.*}\">
-		    <SrcDataSource>$classificationsDir$xyzFile</SrcDataSource>
+		    <SrcDataSource>$classificationsDir/$xyzFile</SrcDataSource>
 		    <GeometryType>wkbPoint</GeometryType>
 		    <GeometryField encoding=\"PointFromColumns\" x=\"x\" y=\"y\" z=\"boosting class\"/>
 		</OGRVRTLayer>
@@ -34,7 +34,7 @@ gen_vrt_gmm(){
 
 	echo "<OGRVRTDataSource>
 		<OGRVRTLayer name=\"${vrtFilename%.*}\">
-		    <SrcDataSource>$classificationsDir$xyzFile</SrcDataSource>
+		    <SrcDataSource>$classificationsDir/$xyzFile</SrcDataSource>
 		    <GeometryType>wkbPoint</GeometryType>
 		    <GeometryField encoding=\"PointFromColumns\" x=\"x\" y=\"y\" z=\"gmm class\"/>
 		</OGRVRTLayer>
@@ -42,8 +42,8 @@ gen_vrt_gmm(){
 	
 }
 
-if [[ $# -ne 3 ]]; then
-	echo "usage : bash gen_raster.bash classificationsDirectory resolutionX resolutionY"
+if [[ $# -ne 4 ]]; then
+	echo "usage : bash gen_raster.bash classificationsDirectory resolutionX resolutionY epsgCode"
 	exit 1
 fi
 
@@ -66,27 +66,29 @@ mkdir -p $vrtGmmDir
 
 resolutionX=$2
 resolutionY=$3
-echo 
+epsg=$4
 
 # gbx
-for FILE in $(ls $dir);
+for FILE in $(ls $dir/*.csv);
 do
+	FILE=$(basename "$FILE")
 	vrtFilename=${FILE%.*}.vrt
-	echo $FILE
+	echo $vrtFilename
 	gen_vrt_gbx $dir $FILE $vrtGbxDir $vrtFilename
-	gdal_grid -outsize $resolutionX $resolutionY -a_srs EPSG:2960 -a invdist -of GTiff -ot Float64 -l ${vrtFilename%.*} $vrtGbxDir/$vrtFilename $rasterGbxDir/$FILE.tiff --config GDAL_NUM_THREADS ALL_CPUS
+	gdal_grid -outsize $resolutionX $resolutionY -a_srs EPSG:$epsg -a invdist -of GTiff -ot Float64 -l ${vrtFilename%.*} $vrtGbxDir/$vrtFilename $rasterGbxDir/$FILE.tiff --config GDAL_NUM_THREADS ALL_CPUS
 
 done
 
 
 # gmm
-for FILE in $(ls $dir);
+for FILE in $(ls $dir/*.csv);
 do
+	FILE=$(basename "$FILE")
 	vrtFilename=${FILE%.*}.vrt
 	echo $FILE
 	gen_vrt_gmm $dir $FILE $vrtGmmDir $vrtFilename
-	gdal_grid -outsize $resolutionX $resolutionY -a_srs EPSG:2960 -a invdist -of GTiff -ot Float64 -l ${vrtFilename%.*} $vrtGmmDir/$vrtFilename $rasterGmmDir/$FILE.tiff --config GDAL_NUM_THREADS ALL_CPUS
-	
+	gdal_grid -outsize $resolutionX $resolutionY -a_srs EPSG:$epsg -a invdist -of GTiff -ot Float64 -l ${vrtFilename%.*} $vrtGmmDir/$vrtFilename $rasterGmmDir/$FILE.tiff --config GDAL_NUM_THREADS ALL_CPUS
+
 done
 
 
