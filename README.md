@@ -12,6 +12,11 @@ Example radius values:
 - For MBES: 10
 - For LiDAR: 100
 
+or process a MBES batch
+```
+bash script/hackel_batch.bash directory outputDirectory radius
+```
+
 ## Step 2: Matching labels with ground truthing
 
 Use the generate-training-data.py script to generate labeled training data:
@@ -45,3 +50,33 @@ This will generate a trained.model binary file that can be loaded with pickle in
 python3 src/apply-model.py trained.model new_xyz_file.Hackel
 ```
 
+# BGX vs GMM
+
+### Step 1: Train both model
+```
+python3 src/apply-model.py trained.model new_xyz_file.Hackel
+python3 src/gmm-best-fit.py new_xyz_file.Hackel max_nb_class
+```
+
+### Step 2: Apply model
+```
+python3 src/apply-both-model.py model-file gmm-model-file hackelDataFile > outputClassification.csv
+```
+or in batch
+```
+bash script/classify-mbes-data.bash hackelDirectory
+```
+
+### Step 3: Generate a comparative table and 3D bar plot
+```
+python3 src/compare-model.py classifiedData
+```
+or in batch
+```
+bash script/gen_table_figure.bash classificationsDirectory
+```
+
+### Step 4: Generate raster
+```
+bash script/genraster.bash classificationsDirectory resolutionX resolutionY epsgCode
+```

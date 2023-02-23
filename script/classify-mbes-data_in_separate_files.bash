@@ -21,7 +21,7 @@ do
 	fname=$(basename $FILE)
 	fbname=${fname%.*}
 	#echo $dir/classifications/$fbname.xyzc
-	echo x, y, z, boosting class, gmm class > $dir/classifications/$fbname.xyzc
-	python3 src/apply_both_models.py trained.model gmm_trained.model $FILE >> $dir/classifications/$fbname.xyzc
+	echo x, y, z, boosting class, gmm class > $dir/classifications/$fbname.csv
+	python3 src/apply_both_models.py trained.model gmm_trained.model $FILE >> $dir/classifications/$fbname.csv
 done
 
