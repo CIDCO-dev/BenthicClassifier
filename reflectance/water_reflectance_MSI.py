@@ -23,6 +23,7 @@ from geocube.api.core import make_geocube
 sentinelapi = SentinelAPI(None, None, 'https://apihub.copernicus.eu/apihub')
 
 #bbox = [lonmin, latmin, lonmax, latmax]
+#bbox = [-68.689360, 48.890805, -68.041661, 49.283823]
 bbox = [-67.71270792889858, 49.28940909966143, -67.67082439228373, 49.30749494507612]
 date = ('20190704', '20190705')
 cloudcoverpercentage = (0, 10)
@@ -109,3 +110,8 @@ def water_reflectance_msi(sentinelapi, bbox, date, cloudcoverpercentage):
     df = df.drop(columns=['x', 'y', 'transverse_mercator', 'l2_flags'])
     df = df.rename(columns={'lon': 'x', 'lat': 'y'})
     df.to_csv(os.path.join(AcolitePath,DownloadResult[0][UUID]["title"]+"L2W.xy"), sep=',', header=True, index=False)
+
+    # Return the dataframe with the water reflectance values, one line per pixel
+    return df
+
+df = water_reflectance_msi(sentinelapi = sentinelapi, bbox = bbox, date = date, cloudcoverpercentage = cloudcoverpercentage)
