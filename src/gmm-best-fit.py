@@ -57,21 +57,6 @@ while n <= maxClusters :
 bestFit = 1 + bic.index(min(bic))
 sys.stderr.write("best fit: " + str(bestFit) + "\n")
 
-predictions = model.predict(features_pd.to_numpy())
-features = features_pd.to_numpy()
-
-"""
-for i in range(len(features)):
-        feature = features[i]
-        xyz = points[i]
-        klass = predictions[i]
-        sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(
-                                        xyz[0], xyz[1], xyz[2], feature[0], feature[1], feature[2], feature[3], feature[4],
-                                        feature[5], feature[6], feature[7], feature[8], feature[9], feature[10], feature[11],
-                                        feature[12], feature[13], feature[14], feature[15], klass
-                                        ))
-"""
-
 #Save model
 pickle.dump(best_model,open("gmm_trained.model","wb"))
 
