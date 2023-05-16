@@ -38,11 +38,11 @@ bic = []
 lowest_bic = np.infty
 
 sys.stderr.write("[+] Finding optimal parameters...\n")
-n = 1
+n = 2
 while n <= maxClusters :
 	s = "progress: " + str(n) + "/" + str(maxClusters)
 	sys.stderr.write(s+"\n")
-	model = mixture.GaussianMixture(n, covariance_type = "full")
+	model = mixture.GaussianMixture(n, covariance_type = "full", reg_covar=1e-5)
 	n += 1
 	model.fit(features_pd.to_numpy())
 	performance = model.bic(features_pd.to_numpy())
@@ -54,7 +54,7 @@ while n <= maxClusters :
 		break;
 
 
-bestFit = 1 + bic.index(min(bic))
+bestFit = 2 + bic.index(min(bic))
 sys.stderr.write("best fit: " + str(bestFit) + "\n")
 
 #Save model

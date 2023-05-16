@@ -23,7 +23,7 @@ trainingFile = sys.argv[1]
 #Load training data
 with open(trainingFile) as f:
 	reader = csv.reader(f)
-	#next(reader)
+	next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(labeled_data)))
 
@@ -67,8 +67,8 @@ with open(trainingFile) as f:
 
 	sys.stderr.write("Totals: \n")
 	sys.stderr.write("[*] {} accuracy: {}\n".format(modelName,metrics.accuracy_score(labelsTest,predictions)))
-	sys.stderr.write(metrics.classification_report(labelsTest, predictions))
-	sys.stderr.write("\n")
-	sys.stderr.write(metrics.confusion_matrix(labelsTest,predictions))
-	sys.stderr.write("\n")
+#	sys.stderr.write(metrics.classification_report(labelsTest, predictions))
+#	sys.stderr.write("\n")
+#	sys.stderr.write(metrics.confusion_matrix(labelsTest,predictions))
+#	sys.stderr.write("\n")
 
