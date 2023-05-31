@@ -19,5 +19,6 @@ radius=$3
 for file in $dir*.txt; 
 do
 	echo $file
+	FILENAME=$(basename -s .txt $file)
 	cat $file | ./build/soundings_generate_features $radius >> $outDir/$FILENAME.hackel
 done
