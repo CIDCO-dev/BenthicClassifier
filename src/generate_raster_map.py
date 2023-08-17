@@ -31,14 +31,11 @@ gmmGroups = data.groupby("gmmClass")
 
 
 fig = pygmt.Figure()
-fig.coast(
-    resolution="h",
-    region=[minLon - 0.005, maxLon + 0.005, minLat - 0.005, maxLat + 0.005],
-    shorelines="thinnest",
-    land="lightgreen",
-    water="lightblue",
-    frame=["a", "+t{}".format(mapTitle)]
+fig.basemap(region=[minLon - 0.005, maxLon + 0.005, minLat - 0.005, maxLat + 0.005], 
+			frame=["a", "+t{}".format(mapTitle)],
+			projection="M12c"
 )
+fig.coast(resolution="f", shorelines="thinnest", land="lightgreen", water="lightblue" )
 
 for classID in gbxGroups.groups:
 	df = gbxGroups.get_group(classID)
@@ -48,28 +45,23 @@ for classID in gbxGroups.groups:
 fig.legend(box=True)
 fig.image(
     imagefile="https://cidco.ca/themes/cidco/css/img/logo_cidco.png",
-    position="jBR+w2",
+    position="jBR+w2+o0.2c",
     box=True,
 )
 
 
-"""
+
 with fig.inset(
-    position="jBL+o0.1c",
-    region=[minLon-1, maxLon + 1,minLat-1, maxLat+1],
+    position="jBL",
+    region=[round(minLon,3)-1, round(maxLon,3)+1, round(minLat,3)-1, round(maxLat,3)+1],
+    projection="M2c",
+    box="+gwhite+p1p"
 ):
-    # Highlight the Japan area in "lightbrown"
-    # and draw its outline with a pen of "0.2p".
-    fig.coast(
-        dcw="JP+glightbrown+p0.2p",
-        area_thresh=10000,
-    )
-    # Plot a rectangle ("r") in the inset map to show the area of the main
-    # figure. "+s" means that the first two columns are the longitude and
-    # latitude of the bottom left corner of the rectangle, and the last two
-    # columns the longitude and latitude of the uppper right corner.
-    fig.plot(data=[minLon, maxLon, minLat, maxLat], style="r+s", pen="1p,blue")
-"""
+	fig.coast(
+		shorelines="thinnest", land="grey", water="lightblue"
+	)
+	fig.plot(data=[[minLon, minLat, maxLon, maxLat]], style="r+s", pen="1p,red")
+
 
 fig.show()
 
