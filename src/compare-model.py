@@ -29,7 +29,7 @@ if len(sys.argv) != 2:
 	sys.exit(1)
 
 
-#sys.stderr.write(["0 : 19", "1 : blocks", "2 : cobble", "3 : gravels", "4 : rocky", "5 : sands", "6 : sandy mud"]) 
+#sys.stderr.write(["0 : blocks", "1 : cobble", "2 : gravels", "3 : rocky", "4 : sands", "5 : sandy mud"]) 
 
 filePath = sys.argv[1]
 classifiedData = read_classification_file(filePath)

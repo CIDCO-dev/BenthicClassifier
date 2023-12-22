@@ -5,7 +5,7 @@ if [[ $# -ne 1 ]]; then
 	exit 1
 fi
 
-if [[ "$(basename $(pwd))" -ne "BenthicClassifier" ]]; then
+if [[ "$(basename $(pwd))" != "BenthicClassifier" ]]; then
 	echo "please execute script from project root"
 	exit 1
 fi
@@ -22,6 +22,7 @@ do
 	fbname=${fname%.*}
 	#echo $dir/classifications/$fbname.xyzc
 	echo x, y, z, boosting class, gmm class > $dir/classifications/$fbname.csv
-	python3 src/apply_both_models.py trained.model gmm_trained.model $FILE >> $dir/classifications/$fbname.csv
+	#python3 src/apply_both_models.py trained.model gmm_trained.model $FILE >> $dir/classifications/$fbname.csv
+	python3 src/apply-model.py trained.model $FILE >> $dir/classifications/$fbname.csv
 done
 

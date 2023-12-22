@@ -29,7 +29,7 @@ train_models(){
 
 classify_data(){
 	hackelDirectory=$1
-	bash script/classify-mbes-data_in_separate_files.bash hackelDirectory
+	bash script/classify-mbes-data_in_separate_files.bash $hackelDirectory
 }
 
 if [[ $# -ne 3 ]]; then
@@ -38,7 +38,7 @@ if [[ $# -ne 3 ]]; then
 fi
 
 # all paths are relative to project root
-if [[ "$(basename $(pwd))" -ne "BenthicClassifier" ]]; then
+if [[ "$(basename $(pwd))" != "BenthicClassifier" ]]; then
 	echo "please execute script from project root"
 	exit 1
 fi
@@ -51,10 +51,10 @@ hackelRadius=$3
 
 ############ SCRIPT ###################
 
-gen_hackel $mbesDir $hackelDir $hackelRadius
-combine_file $hackelDir $HOME/allSurfaces.hackel
+#gen_hackel $mbesDir $hackelDir $hackelRadius
+#combine_file $hackelDir $HOME/allSurfaces.hackel
 
-train_models mbes-training-data.txt $HOME/allSurfaces.hackel
+#train_models mbes-training-data.txt $HOME/allSurfaces.hackel
 classify_data $hackelDir
 
 

@@ -5,7 +5,7 @@ if [[ $# -ne 1 ]]; then
 	exit 1
 fi
 
-if [[ "$(basename $(pwd))" -ne "BenthicClassifier" ]]; then
+if [[ "$(basename $(pwd))" != "BenthicClassifier" ]]; then
 	echo "please execute script from project root"
 	exit 1
 fi
@@ -15,7 +15,7 @@ dir=$1
 echo $dir
 mkdir -p $dir/classification
 
-echo x, y, z, boosting class, gmm class > $dir/classification/classified_both_model.xyzc
+echo x, y, z, boosting class, gmm class > $dir/classification/classified_both_model.csv
 for FILE in $dir*.hackel;
 do
 	echo $FILE
