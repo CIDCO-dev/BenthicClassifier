@@ -47,7 +47,7 @@ if [[ $# -ne 4 ]]; then
 	exit 1
 fi
 
-if [[ "$(basename $(pwd))" -ne "BenthicClassifier" ]]; then
+if [[ "$(basename $(pwd))" != "BenthicClassifier" ]]; then
 	echo "please execute script from project root"
 	exit 1
 fi

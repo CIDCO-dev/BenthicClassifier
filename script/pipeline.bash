@@ -38,7 +38,7 @@ if [[ $# -ne 3 ]]; then
 fi
 
 # all paths are relative to project root
-if [[ "$(basename $(pwd))" -ne "BenthicClassifier" ]]; then
+if [[ "$(basename $(pwd))" != "BenthicClassifier" ]]; then
 	echo "please execute script from project root"
 	exit 1
 fi
